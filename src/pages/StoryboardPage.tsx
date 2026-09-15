@@ -5,16 +5,17 @@
 import { useState } from "react";
 import {
   Search, Grid, List, Film, Loader2, Play, Download, RefreshCw,
-  ChevronRight, Trash2, Eye, Settings, ImageIcon, Plus
+  Trash2, Eye, Settings, ImageIcon, Plus
 } from "lucide-react";
-import { Nav, STORYBOARDS, PROJECT, colors } from "../shared";
-import type { Nav as NavType } from "../shared";
+import { STORYBOARDS, PROJECT, colors, PageId } from "../shared";
 
-export default function StoryboardPage({ navigate }: NavType) {
+interface NavType { navigate: (p: PageId) => void; }
+
+export default function StoryboardPage({ navigate: _navigate }: NavType) {
   const [selected, setSelected] = useState<string | null>("SB-004");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedSB, setSelectedSB] = useState<string | null>(null);
-  const [selectedProject, setSelectedProject] = useState(PROJECT);
+  const [selectedProject, _setSelectedProject] = useState(PROJECT);
 
   const statusColor = (s: string) => 
     s === "done" ? colors.success : s === "running" ? colors.accent : s === "queued" ? colors.info : colors.error;

@@ -5,10 +5,12 @@
 import { useState } from "react";
 import {
   Film, Users, MessageSquare, GitBranch, Download, ChevronLeft,
-  Plus, X, CheckCircle, Loader2, Upload, Wand2,
+  Plus, X, Loader2, Upload, Wand2,
 } from "lucide-react";
-import { PLOT_ANALYSES, colors } from "../shared";
-import type { Nav as NavType } from "../shared";
+import { PLOT_ANALYSES, colors, Nav } from "../shared";
+import type { PageId } from "../shared";
+
+interface NavType { navigate: (p: PageId) => void; }
 
 export function PlotAnalysisPage({ navigate }: NavType) {
   const [showNew, setShowNew] = useState(false);

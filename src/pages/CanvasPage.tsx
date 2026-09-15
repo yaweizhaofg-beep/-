@@ -7,8 +7,7 @@ import {
   FileText, Users, ImageIcon, Layers, Zap, CheckCircle, Download,
   MousePointer, Move, GitBranch, PlusCircle, Type,
 } from "lucide-react";
-import { Nav, colors } from "../shared";
-import type { Nav as NavType } from "../shared";
+import { Nav } from "../shared";
 
 interface CanvasNode {
   id: string; label: string; sub: string; x: number; y: number;

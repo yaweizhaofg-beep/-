@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { X, Plus, Loader2, CheckCircle, User, Settings } from "lucide-react";
 import { 
-  STUDIO_MEMBERS, TEAM_MEMBERS_INIT, TEAM_ROLES,
+  TEAM_MEMBERS_INIT, TEAM_ROLES,
   ROLE_STYLE, TEAM_OWNER_ID, colors 
 } from "../shared";
 import type { Nav as NavType, TeamRole } from "../shared";
