@@ -309,7 +309,7 @@ function OnboardingModal({ onDone }: { onDone: () => void }) {
           ))}
         </div>
         <div style={{ width: 80, height: 80, borderRadius: 24, background: `${STEPS[step].color}22`, border: `1px solid ${STEPS[step].color}44`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-          <STEPS[step].icon style={{ width: 36, height: 36, color: STEPS[step].color }} />
+          <STEPS[step].icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />
         </div>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 12 }}>{STEPS[step].title}</h2>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", lineHeight: 1.7, marginBottom: 36 }}>{STEPS[step].desc}</p>
@@ -461,12 +461,16 @@ export function LandingPage({ navigate }: Nav) {
               </button>
             </div>
             <div style={{ display: "flex", gap: 24, marginTop: 32 }}>
-              {[["10x", "创作效率"], ["500+", "活跃创作者"], ["50+", "参考素材"].map(([v, l]) => (
-                <div key={l}>
-                  <div style={{ fontSize: 20, fontWeight: 700, color: "white" }}>{v}</div>
-                  <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>{l}</div>
-                </div>
-              ))}
+              {[["10x", "创作效率"], ["500+", "活跃创作者"], ["50+", "参考素材"]].map((stat) => {
+                const v = stat[0];
+                const l = stat[1];
+                return (
+                  <div key={l}>
+                    <div style={{ fontSize: 20, fontWeight: 700, color: "white" }}>{v}</div>
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>{l}</div>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -532,14 +536,17 @@ export function LandingPage({ navigate }: Nav) {
           <h2 style={{ fontSize: 28, fontWeight: 700, color: "white", textAlign: "center", marginBottom: 12 }}>选择适合你的方案</h2>
           <p style={{ fontSize: 14, color: "rgba(255,255,255,.4)", textAlign: "center", marginBottom: 32 }}>所有方案均支持随时升级，团队版可按需扩展席位</p>
           <div style={{ display: "flex", gap: 6, marginBottom: 24, justifyContent: "center" }}>
-            {([["personal", "个人版"], ["team", "团队版"]] as const).map(([k, l]) => (
-              <button key={k} onClick={() => setPlanTab(k)} style={{
-                padding: "8px 24px", borderRadius: 100, fontSize: 13, fontWeight: 600, cursor: "none",
-                background: planTab === k ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.04)",
-                border: `1px solid ${planTab === k ? "rgba(255,255,255,.18)" : "rgba(255,255,255,.06)"}`,
-                color: planTab === k ? "white" : "rgba(255,255,255,.4)",
-              }}>{l}</button>
-            ))}
+            {(["personal", "team"] as const).map((k) => {
+              const labelMap = { personal: "个人版", team: "团队版" };
+              return (
+                <button key={k} onClick={() => setPlanTab(k)} style={{
+                  padding: "8px 24px", borderRadius: 100, fontSize: 13, fontWeight: 600, cursor: "none",
+                  background: planTab === k ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.04)",
+                  border: `1px solid ${planTab === k ? "rgba(255,255,255,.18)" : "rgba(255,255,255,.06)"}`,
+                  color: planTab === k ? "white" : "rgba(255,255,255,.4)",
+                }}>{labelMap[k]}</button>
+              );
+            })}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
             {(planTab === "personal" ? PLANS_PERSONAL : PLANS_TEAM).map((p, i) => (
