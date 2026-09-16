@@ -320,12 +320,16 @@ function SubscriptionTab() {
             background: "rgba(255,138,32,.2)", color: "#ff8c20", border: "1px solid rgba(255,138,32,.3)" }}>生效中</span>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8, marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,.06)" }}>
-          {[["3,079", "星石"], ["5", "团队成员"], ["8", "并发任务"]].map(([v, l]) => (
-            <div key={l} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: 18, fontWeight: 700, color: gold }}>{v}</div>
-              <div style={{ fontSize: 11, color: textMuted }}>{l}</div>
-            </div>
-          ))}
+          {[["3,079", "星石"], ["5", "团队成员"], ["8", "并发任务"]].map((stat) => {
+            const v = stat[0];
+            const l = stat[1];
+            return (
+              <div key={l} style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: gold }}>{v}</div>
+                <div style={{ fontSize: 11, color: textMuted }}>{l}</div>
+              </div>
+            );
+          })}
         </div>
       </div>
       <div style={{ background: surface, border: "1px solid rgba(255,255,255,.1)", borderRadius: 18, padding: "20px 24px" }}>
