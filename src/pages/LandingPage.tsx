@@ -309,7 +309,10 @@ function OnboardingModal({ onDone }: { onDone: () => void }) {
           ))}
         </div>
         <div style={{ width: 80, height: 80, borderRadius: 24, background: `${STEPS[step].color}22`, border: `1px solid ${STEPS[step].color}44`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-          <STEPS[step].icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />
+          {(() => {
+            const Icon = STEPS[step].icon;
+            return <Icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />;
+          })()}
         </div>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 12 }}>{STEPS[step].title}</h2>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", lineHeight: 1.7, marginBottom: 36 }}>{STEPS[step].desc}</p>
@@ -481,10 +484,12 @@ export function LandingPage({ navigate }: Nav) {
               { icon: Layers,   label: "分镜规划",    sub: "自动拆解镜头脚本",       color: "#a78bfa" },
               { icon: Film,     label: "批量生图",    sub: "Seedance 2.0 支持",     color: "#06b6d4" },
               { icon: Users,    label: "团队协作",    sub: "多人共享项目资产",       color: "#34d399" },
-            ].map(f => (
+            ].map(f => {
+              const Icon = f.icon;
+              return (
               <div key={f.label} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, padding: 20, backdropFilter: "blur(10px)" }}>
                 <div style={{ width: 40, height: 40, borderRadius: 12, background: `${f.color}22`, border: `1px solid ${f.color}44`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-                  <f.icon style={{ width: 20, height: 20, color: f.color }} />
+                  <Icon style={{ width: 20, height: 20, color: f.color }} />
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 4 }}>{f.label}</div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)" }}>{f.sub}</div>
@@ -519,10 +524,12 @@ export function LandingPage({ navigate }: Nav) {
               { icon: Shield,   title: "费用透明预览", desc: "生成前完整展示星石消耗明细，无隐藏费用，支持充值和团队钱包管理。", color: "#22c55e", accent: "rgba(34,197,94,.1)" },
               { icon: Users,    title: "团队协作空间", desc: "多人项目共享、成员角色管理、权限控制和操作日志，协同创作更高效。", color: "#f59e0b", accent: "rgba(245,158,11,.1)" },
               { icon: Star,     title: "资产库管理",  desc: "统一管理参考图、角色素材、分镜资产，支持版本管理和标签分类。", color: "#ec4899", accent: "rgba(236,72,153,.1)" },
-            ].map(f => (
+            ].map(f => {
+              const Icon = f.icon;
+              return (
               <div key={f.title} style={{ background: f.accent, border: `1px solid ${f.color}22`, borderRadius: 18, padding: 24 }}>
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: `${f.color}22`, border: `1px solid ${f.color}44`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-                  <f.icon style={{ width: 22, height: 22, color: f.color }} />
+                  <Icon style={{ width: 22, height: 22, color: f.color }} />
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "white", marginBottom: 8 }}>{f.title}</h3>
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65 }}>{f.desc}</p>
