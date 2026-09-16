@@ -85,6 +85,12 @@ export const ROLE_STYLE: Record<string, { bg: string; color: string }> = {
   "剪辑后期": { bg: "rgba(99,102,241,0.18)", color: "#6366f1" },
 };
 
+// ─── Shared UI Tokens (Figma Design System) ───────────────────────────────────
+export const surface     = "linear-gradient(145deg,rgba(255,255,255,.055) 0%,transparent 45%),rgba(14,11,22,.97)";
+export const cardShadow = "inset 0 1px 0 rgba(255,255,255,.11), 0 8px 32px rgba(0,0,0,.45)";
+export const textDim    = "rgba(255,255,255,.6)";
+export const gold       = "#ffac30";
+
 // ─── Color Tokens ──────────────────────────────────────────────────────────────
 export const colors = {
   bgPrimary: "#0a0912",
