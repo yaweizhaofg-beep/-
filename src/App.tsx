@@ -6,10 +6,12 @@
 import { useState, useCallback, type ReactNode } from "react";
 import {
   Flame, Home, FolderOpen, Film, Layers, BookOpen, Users, Package, CreditCard,
-  ChevronRight, Plus, Star, Zap, Clock3, Minus, Square, X
+  ChevronRight, Plus, Star, Zap, Clock3, Minus, Square, X, User
 } from "lucide-react";
 
 // Import pages
+import LandingPage from "./pages/LandingPage";
+import UserCenterPage from "./pages/UserCenterPage";
 import CanvasPage from "./pages/CanvasPage";
 import { PlotAnalysisPage, PlotAnalysisDetailPage } from "./pages/PlotAnalysisPage";
 import StoryboardPage from "./pages/StoryboardPage";
@@ -27,6 +29,7 @@ const NAV_ITEMS: { id: PageId; icon: typeof Home; label: string; badge: number |
   { id: "team", icon: Users, label: "团队管理", badge: null },
   { id: "assets", icon: Package, label: "素材库", badge: null },
   { id: "billing", icon: CreditCard, label: "账单", badge: null },
+  { id: "user-center", icon: User, label: "用户中心", badge: null },
 ];
 
 // ─── Window Frame ──────────────────────────────────────────────────────────────
@@ -697,24 +700,28 @@ const PAGE_TITLES: Record<PageId, string> = {
 
 // ─── Main App ─────────────────────────────────────────────────────────────────
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageId>("workspace");
+  const [currentPage, setCurrentPage] = useState<PageId>("landing");
 
   const navigate = useCallback((page: PageId) => {
     setCurrentPage(page);
   }, []);
 
+  const isAppShell = currentPage !== "landing" && currentPage !== "register" && currentPage !== "verify" && currentPage !== "onboarding";
+
   const renderPage = () => {
     switch (currentPage) {
-      case "workspace": return <WorkspacePage navigate={navigate} />;
-      case "projects": return <ProjectsPage navigate={navigate} />;
-      case "storyboard": return <StoryboardPage navigate={navigate} />;
-      case "canvas": return <CanvasPage navigate={navigate} />;
-      case "plot-analysis": return <PlotAnalysisPage navigate={navigate} />;
+      case "landing":           return <LandingPage navigate={navigate} />;
+      case "workspace":         return <WorkspacePage navigate={navigate} />;
+      case "projects":          return <ProjectsPage navigate={navigate} />;
+      case "storyboard":        return <StoryboardPage navigate={navigate} />;
+      case "canvas":            return <CanvasPage navigate={navigate} />;
+      case "plot-analysis":     return <PlotAnalysisPage navigate={navigate} />;
       case "plot-analysis-detail": return <PlotAnalysisDetailPage navigate={navigate} />;
-      case "team": return <TeamPage navigate={navigate} />;
-      case "assets": return <AssetsPage />;
-      case "billing": return <BillingPage />;
-      default: return <WorkspacePage navigate={navigate} />;
+      case "team":              return <TeamPage navigate={navigate} />;
+      case "assets":            return <AssetsPage />;
+      case "billing":           return <BillingPage />;
+      case "user-center":       return <UserCenterPage navigate={navigate} />;
+      default:                  return <WorkspacePage navigate={navigate} />;
     }
   };
 
@@ -727,31 +734,29 @@ export default function App() {
       background: colors.bgPrimary,
       overflow: "hidden",
     }}>
-      {/* Window Frame */}
-      <WindowFrame />
-
-      {/* Main Layout */}
-      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-        {/* Sidebar */}
-        <Sidebar currentPage={currentPage} onNavigate={navigate} />
-
-        {/* Content Area */}
-        <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          background: colors.bgPrimary,
-        }}>
-          {/* Page Header */}
-          <Header title={PAGE_TITLES[currentPage] || "工作空间"} />
-
-          {/* Page Content */}
+      {/* App Shell — only for non-landing pages */}
+      {isAppShell ? (
+        <>
+          <WindowFrame />
           <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
-            {renderPage()}
+            <Sidebar currentPage={currentPage} onNavigate={navigate} />
+            <div style={{
+              flex: 1,
+              display: "flex",
+              flexDirection: "column",
+              overflow: "hidden",
+              background: colors.bgPrimary,
+            }}>
+              <Header title={PAGE_TITLES[currentPage] || "工作空间"} />
+              <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+                {renderPage()}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        </>
+      ) : (
+        renderPage()
+      )}
     </div>
   );
 }
