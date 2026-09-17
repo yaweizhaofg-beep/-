@@ -1,11 +1,11 @@
 import { useState } from "react";
 import {
-  X, ChevronLeft, CheckCircle, Check, Star, Plus, Loader2,
-  User, Shield, Bell, CreditCard, Users, KeyRound, LogOut,
+  Check, Star,
+  User, Shield, Bell, CreditCard, KeyRound, LogOut,
 } from "lucide-react";
 import {
-  Nav, USER, TEAM_OWNER_ID, TEAM_MEMBERS_INIT, TEAM_ROLES, TeamRole, ROLE_STYLE,
-  surface, cardShadow, textMuted, textDim, gold,
+  Nav, USER, TEAM_MEMBERS_INIT, ROLE_STYLE,
+  surface, cardShadow, textDim, textMuted, gold,
 } from "../shared";
 
 type UCTab = "account" | "stars" | "recharge" | "subscription" | "team" | "security";

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  Eye, EyeOff, Check, ChevronRight, ChevronLeft, Play, Download,
-  Shield, Star, Zap, Users, Film, Lock, Loader2, X, Sparkles, Home,
+  Eye, EyeOff, Check, ChevronRight, Play, Sparkles,
+  Shield, Star, Zap, Users, Film, Loader2, X,
   BookOpen, Layers,
 } from "lucide-react";
 import { Nav } from "../shared";
@@ -309,7 +309,10 @@ function OnboardingModal({ onDone }: { onDone: () => void }) {
           ))}
         </div>
         <div style={{ width: 80, height: 80, borderRadius: 24, background: `${STEPS[step].color}22`, border: `1px solid ${STEPS[step].color}44`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-          <STEPS[step].icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />
+          {(() => {
+            const Icon = STEPS[step].icon;
+            return <Icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />;
+          })()}
         </div>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 12 }}>{STEPS[step].title}</h2>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", lineHeight: 1.7, marginBottom: 36 }}>{STEPS[step].desc}</p>
@@ -484,7 +487,10 @@ export function LandingPage({ navigate }: Nav) {
             ].map(f => (
               <div key={f.label} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, padding: 20, backdropFilter: "blur(10px)" }}>
                 <div style={{ width: 40, height: 40, borderRadius: 12, background: `${f.color}22`, border: `1px solid ${f.color}44`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-                  <f.icon style={{ width: 20, height: 20, color: f.color }} />
+                  {(() => {
+                    const Icon = f.icon;
+                    return <Icon style={{ width: 20, height: 20, color: f.color }} />;
+                  })()}
                 </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 4 }}>{f.label}</div>
                 <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)" }}>{f.sub}</div>
@@ -522,7 +528,10 @@ export function LandingPage({ navigate }: Nav) {
             ].map(f => (
               <div key={f.title} style={{ background: f.accent, border: `1px solid ${f.color}22`, borderRadius: 18, padding: 24 }}>
                 <div style={{ width: 48, height: 48, borderRadius: 14, background: `${f.color}22`, border: `1px solid ${f.color}44`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-                  <f.icon style={{ width: 22, height: 22, color: f.color }} />
+                  {(() => {
+                    const Icon = f.icon;
+                    return <Icon style={{ width: 22, height: 22, color: f.color }} />;
+                  })()}
                 </div>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: "white", marginBottom: 8 }}>{f.title}</h3>
                 <p style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65 }}>{f.desc}</p>
