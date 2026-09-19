@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "星核耀火 - AI视频创作平台桌面版",
   "type": "module",
+  "main": "dist-electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "electron:compile": "tsc -p tsconfig.electron.json && node scripts/write-electron-pkg.cjs",
     "electron": "electron .",
-    "electron:dev": "concurrently \"vite\" \"electron .\""
+    "electron:dev": "npm run electron:compile && concurrently -k -n vite,electron \"vite --port 5173 --strictPort\" \"npm run electron:wait && electron --enable-logging --inspect=0 .\"",
+    "electron:wait": "node scripts/wait-vite.cjs",
+    "electron:diagnose": "node scripts/diagnose-electron.cjs",
+    "electron:build": "npm run build && npm run electron:compile && electron-builder",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "react": "^18.2.0",

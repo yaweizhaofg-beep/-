@@ -1,24 +1,34 @@
 import { useState, useEffect, useRef } from "react";
 import {
-  Eye, EyeOff, Check, ChevronRight, Play, Sparkles,
-  Shield, Star, Zap, Users, Film, Loader2, X,
-  BookOpen, Layers,
+  Check, ChevronRight, Play, Sparkles, ArrowRight,
+  Zap, Users, Film,
+  BookOpen, Layers, Clapperboard,
+  UserCircle2, Megaphone,
 } from "lucide-react";
 import { Nav } from "../shared";
 
-// ─── Plans ─────────────────────────────────────────────────────────────────────
+// ─── Plans (per Figma Make LandingSection.tsx) ───────────────────────────────
 const PLANS_PERSONAL = [
-  { name: "星尘试用", price: 0,   period: "7天",  stars: 30,    members: 1, concurrent: 1, queue: 50,    hot: false, tag: null, perks: ["指定体验模型", "1人并发", "免费体验"] },
-  { name: "微光启航", price: 28,  period: "7天",  stars: 288,   members: 2, concurrent: 2, queue: 100,   hot: false, tag: null, perks: ["全创作模式", "2人并发"] },
-  { name: "星芒协作", price: 99,  period: "30天", stars: 1019,  members: 3, concurrent: 4, queue: 300,   hot: false, tag: null, perks: ["全创作模式", "3人", "4并发"] },
-  { name: "星轨小队", price: 299, period: "30天", stars: 3079,  members: 5, concurrent: 8, queue: 1000,  hot: true,  tag: "主推", perks: ["全创作模式", "5人", "8并发"] },
+  { name: "星尘试用", price: 0,   period: "7天",  stars: 30,   note: "活动星石", members: 1, concurrent: 1, queue: 50,   hot: false, tag: "免费", perks: ["体验全创作模式", "1人使用", "1并发"] },
+  { name: "微光启航", price: 28,  period: "7天",  stars: 250,  note: "套餐星石", members: 1, concurrent: 2, queue: 100,  hot: false, tag: null,   perks: ["全创作模式", "1人使用", "2并发"] },
+  { name: "星芒个人", price: 99,  period: "30天", stars: 900,  note: "套餐星石", members: 1, concurrent: 4, queue: 300,  hot: false, tag: null,   perks: ["全创作模式", "1人使用", "4并发"] },
 ];
 const PLANS_TEAM = [
-  { name: "星核轻量", price: 599,  period: "30天", stars: 6169,  members: 10, concurrent: 12, queue: 3000,  hot: false, tag: null,   perks: ["全创作模式", "10人", "12并发"] },
-  { name: "星核基础", price: 999,  period: "30天", stars: 10289, members: 20, concurrent: 20, queue: 10000, hot: true,  tag: "主推",  perks: ["全创作模式", "20人", "20并发"] },
-  { name: "星核高级", price: 1999, period: "30天", stars: 20589, members: 30, concurrent: 20, queue: 30000, hot: false, tag: null,   perks: ["全创作模式", "30人", "并发可扩展25"] },
-  { name: "超级新星", price: -1,   period: "定制", stars: 0,     members: 0,  concurrent: 0,  queue: 0,     hot: false, tag: "商务", perks: ["API与回调", "私有工作流", "专属SLA"] },
+  { name: "星轨小队", price: 299,  period: "30天", stars: 2500,  note: "套餐星石", members: 5,  concurrent: 8,  queue: 1000,  hot: true,  tag: "主推",  perks: ["团队资产库", "5人协作", "8并发"] },
+  { name: "星核轻量", price: 599,  period: "30天", stars: 5000,  note: "套餐星石", members: 10, concurrent: 12, queue: 3000,  hot: false, tag: null,   perks: ["团队资产库", "10人", "12并发"] },
+  { name: "星核基础", price: 999,  period: "30天", stars: 8000,  note: "套餐星石", members: 20, concurrent: 20, queue: 10000, hot: false, tag: null,   perks: ["团队资产库", "20人", "20并发"] },
+  { name: "星核高级", price: 1999, period: "30天", stars: 16000, note: "套餐星石", members: 30, concurrent: 25, queue: 30000, hot: false, tag: null,   perks: ["团队资产库", "30人", "25并发"] },
+  { name: "超级新星", price: -1,   period: "定制", stars: 0,     note: "",         members: 0,  concurrent: 0,  queue: 0,     hot: false, tag: "商务",  perks: ["API与回调", "私有工作流", "专属SLA"] },
 ];
+
+// ─── Banner Carousel data (Figma Make) ───────────────────────────────────────
+const BANNERS = [
+  { label: "全新功能", title: "剧目批量生成",      sub: "20分镜一键提交，实时进度追踪",     c1: "#7c3aed", c2: "#4f46e5" },
+  { label: "模型接入", title: "Seedance 2.0 Fast", sub: "最高30秒 · 50个参考素材支持",     c1: "#ea6020", c2: "#b45309" },
+  { label: "正式上线", title: "AI 分镜管理",        sub: "自动拆章提取实体，费用生成前预览", c1: "#0e7490", c2: "#155e75" },
+];
+
+// (FAQ moved into FAQSection — Make source keeps the FAQ list inside the section itself)
 
 // ─── Aurora Canvas ──────────────────────────────────────────────────────────────
 function AuroraCanvas({ children, style }: { children?: React.ReactNode; style?: React.CSSProperties }) {
@@ -124,169 +134,6 @@ function AuroraCanvas({ children, style }: { children?: React.ReactNode; style?:
   );
 }
 
-// ─── Login Modal ────────────────────────────────────────────────────────────────
-function LoginModal({ onClose, onSwitch, onLogin }: { onClose: () => void; onSwitch: () => void; onLogin: () => void }) {
-  const [email, setEmail] = useState("");
-  const [pw, setPw] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-
-  const handleLogin = () => {
-    if (!email.trim() || !pw) { setErr("请填写邮箱和密码"); return; }
-    setLoading(true); setErr("");
-    setTimeout(() => {
-      setLoading(false);
-      onLogin();
-    }, 1200);
-  };
-
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center",
-      background: "rgba(0,0,0,.8)", backdropFilter: "blur(12px)" }}>
-      <div style={{ width: 420, background: "#14111f", border: "1px solid rgba(255,255,255,.1)", borderRadius: 24, padding: "32px 32px 28px", boxShadow: "0 40px 100px rgba(0,0,0,.7)" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-          <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "white", marginBottom: 3 }}>登录星核耀火</h2>
-            <p style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)" }}>AI 视频创作平台</p>
-          </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "rgba(255,255,255,.35)", cursor: "none", display: "flex" }}><X style={{ width: 18, height: 18 }} /></button>
-        </div>
-        <div style={{ marginBottom: 14 }}>
-          <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,.5)", marginBottom: 7 }}>邮箱</label>
-          <input value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
-            style={{ width: "100%", padding: "11px 14px", borderRadius: 12, fontSize: 14, background: "rgba(255,255,255,.06)", border: `1px solid ${err && !email ? "rgba(248,113,113,.5)" : "rgba(255,255,255,.1)"}`, color: "white", outline: "none", boxSizing: "border-box" }}
-            onFocus={e => (e.currentTarget.style.borderColor = "rgba(255,138,31,.5)")}
-            onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.1)")} />
-        </div>
-        <div style={{ marginBottom: 20 }}>
-          <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,.5)", marginBottom: 7 }}>密码</label>
-          <div style={{ position: "relative" }}>
-            <input value={pw} onChange={e => setPw(e.target.value)} type={showPw ? "text" : "password"} placeholder="••••••••"
-              style={{ width: "100%", padding: "11px 42px 11px 14px", borderRadius: 12, fontSize: 14, background: "rgba(255,255,255,.06)", border: `1px solid ${err && !pw ? "rgba(248,113,113,.5)" : "rgba(255,255,255,.1)"}`, color: "white", outline: "none", boxSizing: "border-box" }}
-              onFocus={e => (e.currentTarget.style.borderColor = "rgba(255,138,31,.5)")}
-              onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.1)")} />
-            <button onClick={() => setShowPw(!showPw)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "rgba(255,255,255,.35)", cursor: "none", display: "flex" }}>
-              {showPw ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
-            </button>
-          </div>
-        </div>
-        {err && <p style={{ fontSize: 12, color: "#f87171", marginBottom: 14 }}>{err}</p>}
-        <button onClick={handleLogin} disabled={loading}
-          style={{ width: "100%", padding: "12px", borderRadius: 12, fontSize: 14, fontWeight: 700, background: loading ? "rgba(255,138,31,.6)" : "linear-gradient(135deg,#ff8c20,#ff5010)", border: "none", color: "black", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, cursor: "none" }}>
-          {loading && <Loader2 style={{ width: 15, height: 15, animation: "spin 1s linear infinite" }} />}
-          {loading ? "登录中…" : "登录"}
-        </button>
-        <p style={{ textAlign: "center", fontSize: 12.5, color: "rgba(255,255,255,.38)", marginTop: 16 }}>
-          没有账号？<button onClick={onSwitch} style={{ background: "none", border: "none", color: "#ff8c20", cursor: "none", fontSize: 12.5, fontWeight: 600 }}>立即注册</button>
-        </p>
-      </div>
-    </div>
-  );
-}
-
-// ─── Register Modal ──────────────────────────────────────────────────────────────
-function RegisterModal({ onClose, onSwitch }: { onClose: () => void; onSwitch: () => void }) {
-  const [step, setStep] = useState<"form" | "verify">("form");
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [sent, setSent] = useState(false);
-  const [pw, setPw] = useState("");
-  const [showPw, setShowPw] = useState(false);
-  const [agree, setAgree] = useState(false);
-  const [err, setErr] = useState("");
-
-  const handleSendCode = () => {
-    if (!email.trim()) { setErr("请输入邮箱"); return; }
-    setSent(true); setErr("");
-  };
-
-  const handleVerify = () => {
-    if (code.length < 4) { setErr("请输入4位验证码"); return; }
-    setStep("verify");
-  };
-
-  return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center",
-      background: "rgba(0,0,0,.8)", backdropFilter: "blur(12px)" }}>
-      <div style={{ width: 440, background: "#14111f", border: "1px solid rgba(255,255,255,.1)", borderRadius: 24, padding: "32px 32px 28px", boxShadow: "0 40px 100px rgba(0,0,0,.7)" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-          <div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, color: "white", marginBottom: 3 }}>{step === "form" ? "注册账号" : "验证邮箱"}</h2>
-            <p style={{ fontSize: 12.5, color: "rgba(255,255,255,.4)" }}>{step === "form" ? "创建你的创作空间" : `验证码已发送至 ${email}`}</p>
-          </div>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "rgba(255,255,255,.35)", cursor: "none", display: "flex" }}><X style={{ width: 18, height: 18 }} /></button>
-        </div>
-
-        {step === "form" ? (
-          <>
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,.5)", marginBottom: 7 }}>邮箱</label>
-              <div style={{ display: "flex", gap: 8 }}>
-                <input value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com"
-                  style={{ flex: 1, padding: "11px 14px", borderRadius: 12, fontSize: 14, background: "rgba(255,255,255,.06)", border: `1px solid rgba(255,255,255,.1)`, color: "white", outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "rgba(255,138,31,.5)")}
-                  onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.1)")} />
-                <button onClick={handleSendCode} disabled={sent}
-                  style={{ padding: "11px 16px", borderRadius: 12, fontSize: 12.5, fontWeight: 600, background: sent ? "rgba(34,197,94,.15)" : "rgba(255,255,255,.07)", border: `1px solid ${sent ? "rgba(34,197,94,.3)" : "rgba(255,255,255,.1)"}`, color: sent ? "#34d399" : "rgba(255,255,255,.6)", cursor: "none", whiteSpace: "nowrap" }}>
-                  {sent ? <><Check style={{ width: 12, height: 12, display: "inline", marginRight: 4 }} />已发送</> : "获取验证码"}
-                </button>
-              </div>
-            </div>
-            <div style={{ marginBottom: 14 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,.5)", marginBottom: 7 }}>验证码</label>
-              <input value={code} onChange={e => setCode(e.target.value)} placeholder="请输入4位验证码" maxLength={6}
-                style={{ width: "100%", padding: "11px 14px", borderRadius: 12, fontSize: 14, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "white", outline: "none", boxSizing: "border-box", letterSpacing: "0.3em" }}
-                onFocus={e => (e.currentTarget.style.borderColor = "rgba(255,138,31,.5)")}
-                onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.1)")} />
-            </div>
-            <div style={{ marginBottom: 18 }}>
-              <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,.5)", marginBottom: 7 }}>设置密码</label>
-              <div style={{ position: "relative" }}>
-                <input value={pw} onChange={e => setPw(e.target.value)} type={showPw ? "text" : "password"} placeholder="至少8位，包含字母和数字"
-                  style={{ width: "100%", padding: "11px 42px 11px 14px", borderRadius: 12, fontSize: 14, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "white", outline: "none", boxSizing: "border-box" }}
-                  onFocus={e => (e.currentTarget.style.borderColor = "rgba(255,138,31,.5)")}
-                  onBlur={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,.1)")} />
-                <button onClick={() => setShowPw(!showPw)} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "rgba(255,255,255,.35)", cursor: "none", display: "flex" }}>
-                  {showPw ? <EyeOff style={{ width: 16, height: 16 }} /> : <Eye style={{ width: 16, height: 16 }} />}
-                </button>
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: 20 }}>
-              <button onClick={() => setAgree(!agree)} style={{ width: 18, height: 18, borderRadius: 4, flexShrink: 0, marginTop: 1,
-                background: agree ? "#ff8c20" : "transparent",
-                border: `1px solid ${agree ? "#ff8c20" : "rgba(255,255,255,.2)"}`, cursor: "none", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                {agree && <Check style={{ width: 11, height: 11, color: "black" }} />}
-              </button>
-              <span style={{ fontSize: 12, color: "rgba(255,255,255,.4)", lineHeight: 1.6 }}>
-                我已阅读并同意<a href="#" style={{ color: "#ff8c20" }}>《用户协议》</a>和<a href="#" style={{ color: "#ff8c20" }}>《隐私政策》</a>
-              </span>
-            </div>
-            {err && <p style={{ fontSize: 12, color: "#f87171", marginBottom: 12 }}>{err}</p>}
-            <button onClick={() => { if (!agree) { setErr("请先同意用户协议"); return; } handleVerify(); }} disabled={!sent}
-              style={{ width: "100%", padding: "12px", borderRadius: 12, fontSize: 14, fontWeight: 700, background: !agree || !sent ? "rgba(255,138,31,.4)" : "linear-gradient(135deg,#ff8c20,#ff5010)", border: "none", color: "black", cursor: "none" }}>
-              注册
-            </button>
-          </>
-        ) : (
-          <>
-            <div style={{ textAlign: "center", padding: "24px 0 20px" }}>
-              <div style={{ width: 56, height: 56, borderRadius: "50%", background: "rgba(255,138,31,.1)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
-                <Check style={{ width: 28, height: 28, color: "#ff8c20" }} />
-              </div>
-              <h3 style={{ fontSize: 16, fontWeight: 700, color: "white", marginBottom: 8 }}>邮箱验证通过</h3>
-              <p style={{ fontSize: 13, color: "rgba(255,255,255,.4)", lineHeight: 1.6 }}>账号创建成功！30枚活动星石已到账。<br />正在跳转工作空间…</p>
-            </div>
-          </>
-        )}
-        <p style={{ textAlign: "center", fontSize: 12.5, color: "rgba(255,255,255,.38)", marginTop: 16 }}>
-          已有账号？<button onClick={onSwitch} style={{ background: "none", border: "none", color: "#ff8c20", cursor: "none", fontSize: 12.5, fontWeight: 600 }}>立即登录</button>
-        </p>
-      </div>
-    </div>
-  );
-}
-
 // ─── Onboarding Modal ───────────────────────────────────────────────────────────
 function OnboardingModal({ onDone }: { onDone: () => void }) {
   const [step, setStep] = useState(0);
@@ -309,20 +156,17 @@ function OnboardingModal({ onDone }: { onDone: () => void }) {
           ))}
         </div>
         <div style={{ width: 80, height: 80, borderRadius: 24, background: `${STEPS[step].color}22`, border: `1px solid ${STEPS[step].color}44`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 24px" }}>
-          {(() => {
-            const Icon = STEPS[step].icon;
-            return <Icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />;
-          })()}
+          {(() => { const Icon = STEPS[step].icon; return <Icon style={{ width: 36, height: 36, color: STEPS[step].color } as React.CSSProperties} />; })()}
         </div>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 12 }}>{STEPS[step].title}</h2>
         <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)", lineHeight: 1.7, marginBottom: 36 }}>{STEPS[step].desc}</p>
         <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
           {step > 0 && (
-            <button onClick={() => setStep(step - 1)} style={{ padding: "11px 28px", borderRadius: 12, fontSize: 14, fontWeight: 500, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.6)", cursor: "none" }}>
+            <button onClick={() => setStep(step - 1)} style={{ padding: "11px 28px", borderRadius: 12, fontSize: 14, fontWeight: 500, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.6)", cursor: "pointer" }}>
               上一步
             </button>
           )}
-          <button onClick={handleNext} style={{ padding: "11px 36px", borderRadius: 12, fontSize: 14, fontWeight: 700, background: "linear-gradient(135deg,#ff8c20,#ff5010)", border: "none", color: "black", cursor: "none" }}>
+          <button onClick={handleNext} style={{ padding: "11px 36px", borderRadius: 12, fontSize: 14, fontWeight: 700, background: "linear-gradient(135deg,#ff8c20,#ff5010)", border: "none", color: "black", cursor: "pointer" }}>
             {step < STEPS.length - 1 ? "下一步" : "开始创作"}
           </button>
         </div>
@@ -332,274 +176,643 @@ function OnboardingModal({ onDone }: { onDone: () => void }) {
 }
 
 // ─── FAQ Accordion ─────────────────────────────────────────────────────────────
-function FAQSection() {
-  const [open, setOpen] = useState<number | null>(null);
+function FAQSection({ navigate: _navigate }: { navigate: Nav["navigate"] }) {
+  const [open, setOpen] = useState<number | null>(0);
   const FAQS = [
     { q: "注册的30活动星石怎么用？", a: "实名认证完成后自动到账，7天有效，仅限指定体验模型，优先于付费星石消耗。" },
     { q: "1元等于多少星石？", a: "1元=10付费星石。实际任务价格由模型、规格和参数决定，生成前完整展示。" },
     { q: "参考图为什么影响费用？", a: "参考图需额外图像分析处理，数量和分辨率越高费用越大，提交前明细可见。" },
     { q: "任务失败如何处理？", a: "因技术原因失败时，按实际消耗处理退回，账单逐笔可查。" },
+    { q: "生成文件保存多久？", a: "默认保存 90 天，团队版本可延长至 180 天。过期前系统会邮件提醒。" },
   ];
   return (
-    <section style={{ maxWidth: 720, margin: "0 auto", padding: "60px 32px" }}>
-      <h2 style={{ fontSize: 22, fontWeight: 700, color: "white", textAlign: "center", marginBottom: 32 }}>常见问题</h2>
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {FAQS.map((f, i) => (
-          <div key={i} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 14, overflow: "hidden" }}>
-            <button onClick={() => setOpen(open === i ? null : i)} style={{
-              width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-              padding: "16px 20px", background: "none", border: "none", cursor: "none", textAlign: "left"
-            }}>
-              <span style={{ fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,.85)" }}>{f.q}</span>
-              <ChevronRight style={{ width: 16, height: 16, color: "rgba(255,255,255,.35)", transform: open === i ? "rotate(90deg)" : "none", transition: "transform .2s", flexShrink: 0 }} />
-            </button>
-            {open === i && (
-              <div style={{ padding: "0 20px 16px" }}>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.7 }}>{f.a}</p>
-              </div>
-            )}
-          </div>
-        ))}
+    <section style={{ maxWidth: 900, margin: "0 auto", padding: "60px 32px 80px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "300px 1fr", gap: 60, alignItems: "flex-start" }}>
+        <div>
+          <h2 style={{ fontSize: 28, fontWeight: 700, color: "white", marginBottom: 16, lineHeight: 1.3 }}>常见问题</h2>
+          <p style={{ fontSize: 13.5, color: "rgba(255,255,255,.45)", lineHeight: 1.7, marginBottom: 24 }}>
+            还有疑问？我们整理了创作者最常关心的问题。如果没找到答案，可以查看完整使用手册或联系客服。
+          </p>
+          <button onClick={() => {}} style={{ padding: "10px 18px", borderRadius: 10, fontSize: 13, fontWeight: 600, background: "rgba(255,138,31,.12)", border: "1px solid rgba(255,138,31,.3)", color: "#ff8c20", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+            查看使用手册 <ArrowRight style={{ width: 13, height: 13 }} />
+          </button>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {FAQS.map((f, i) => (
+            <div key={i} style={{ background: "rgba(255,255,255,.04)", border: `1px solid ${open === i ? "rgba(255,138,31,.3)" : "rgba(255,255,255,.07)"}`, borderRadius: 14, overflow: "hidden", transition: "border-color .2s" }}>
+              <button onClick={() => setOpen(open === i ? null : i)} style={{
+                width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                padding: "16px 20px", background: "none", border: "none", cursor: "pointer", textAlign: "left"
+              }}>
+                <span style={{ fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,.85)" }}>{f.q}</span>
+                <ChevronRight style={{ width: 16, height: 16, color: open === i ? "#ff8c20" : "rgba(255,255,255,.35)", transform: open === i ? "rotate(90deg)" : "none", transition: "transform .2s", flexShrink: 0 }} />
+              </button>
+              {open === i && (
+                <div style={{ padding: "0 20px 16px" }}>
+                  <p style={{ fontSize: 13, color: "rgba(255,255,255,.55)", lineHeight: 1.7 }}>{f.a}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 // ─── Plan Card ─────────────────────────────────────────────────────────────────
-function PlanCard({ plan, selected, onSelect }: { plan: typeof PLANS_PERSONAL[number]; selected: boolean; onSelect: () => void }) {
-  return (
-    <button onClick={onSelect} style={{
-      padding: "20px 18px", borderRadius: 16, textAlign: "left", cursor: "none",
-      background: selected ? "rgba(255,138,31,.08)" : "rgba(255,255,255,.04)",
-      border: `1px solid ${selected ? "rgba(255,138,31,.4)" : "rgba(255,255,255,.08)"}`,
-      transition: "all .2s", width: "100%", display: "block",
-    }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
-        <div>
-          <div style={{ fontSize: 15, fontWeight: 700, color: "white", marginBottom: 2 }}>{plan.name}</div>
+function PlanCard({ plan, featured = false }: { plan: typeof PLANS_PERSONAL[number]; featured?: boolean }) {
+  if (featured) {
+    return (
+      <div style={{
+        padding: "28px 24px", borderRadius: 20, position: "relative", overflow: "hidden",
+        background: "linear-gradient(160deg, #ff8c20 0%, #ff5010 100%)",
+        color: "black", boxShadow: "0 20px 60px rgba(255,80,16,.3)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+          <div style={{ fontSize: 16, fontWeight: 700 }}>{plan.name}</div>
           {plan.tag && (
-            <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: plan.tag === "主推" ? "rgba(255,138,31,.2)" : "rgba(99,102,241,.2)", color: plan.tag === "主推" ? "#ff8c20" : "#818cf8", border: `1px solid ${plan.tag === "主推" ? "rgba(255,138,31,.3)" : "rgba(99,102,241,.3)"}` }}>
+            <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "rgba(0,0,0,.2)", color: "black" }}>
               {plan.tag}
             </span>
           )}
         </div>
-        <div style={{ textAlign: "right" }}>
+        <div style={{ marginBottom: 8 }}>
           {plan.price > 0 ? (
-            <>
-              <div style={{ fontSize: 20, fontWeight: 700, color: "#ff8c20" }}>¥{plan.price}</div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.3)" }}>/ {plan.period}</div>
-            </>
-          ) : plan.price === 0 ? (
-            <div style={{ fontSize: 20, fontWeight: 700, color: "rgba(255,255,255,.6)" }}>免费</div>
+            <span style={{ fontSize: 36, fontWeight: 800 }}>¥{plan.price}<span style={{ fontSize: 14, fontWeight: 500, opacity: 0.7 }}> / {plan.period}</span></span>
           ) : (
-            <div style={{ fontSize: 16, fontWeight: 700, color: "rgba(255,255,255,.6)" }}>商务定价</div>
+            <span style={{ fontSize: 28, fontWeight: 800 }}>免费体验</span>
           )}
         </div>
+        <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 24, opacity: 0.85 }}>
+          {plan.stars.toLocaleString()} 星石 · {plan.members}人 · {plan.concurrent}并发 · 排队 {plan.queue}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 24 }}>
+          {plan.perks.map((p, i) => (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <Check style={{ width: 14, height: 14, color: "rgba(0,0,0,.85)", flexShrink: 0 }} />
+              <span style={{ fontSize: 13, fontWeight: 500 }}>{p}</span>
+            </div>
+          ))}
+        </div>
+        <button style={{ width: "100%", padding: "12px", borderRadius: 12, fontSize: 14, fontWeight: 700, background: "rgba(0,0,0,.25)", border: "none", color: "black", cursor: "pointer" }}>
+          立即购买
+        </button>
       </div>
-      <div style={{ fontSize: 12, color: "#ff8c20", marginBottom: 12 }}>{plan.stars.toLocaleString()} 星石 / {plan.members}人 / {plan.concurrent}并发</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+    );
+  }
+  return (
+    <div style={{
+      padding: "24px 22px", borderRadius: 18,
+      background: "rgba(255,255,255,.04)",
+      border: "1px solid rgba(255,255,255,.08)",
+    }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 14 }}>
+        <div style={{ fontSize: 15, fontWeight: 700, color: "white" }}>{plan.name}</div>
+        {plan.tag && (
+          <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 20, background: "rgba(99,102,241,.15)", color: "#818cf8", border: "1px solid rgba(99,102,241,.3)" }}>
+            {plan.tag}
+          </span>
+        )}
+      </div>
+      <div style={{ marginBottom: 4 }}>
+        {plan.price > 0 ? (
+          <span style={{ fontSize: 26, fontWeight: 700, color: "white" }}>¥{plan.price}<span style={{ fontSize: 12, fontWeight: 400, color: "rgba(255,255,255,.4)", marginLeft: 4 }}>/ {plan.period}</span></span>
+        ) : plan.price === 0 ? (
+          <span style={{ fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,.6)" }}>免费</span>
+        ) : (
+          <span style={{ fontSize: 20, fontWeight: 700, color: "white" }}>商务定价</span>
+        )}
+      </div>
+      <div style={{ fontSize: 12, color: "#ff8c20", fontWeight: 600, marginBottom: 18 }}>
+        {plan.stars.toLocaleString()} 星石 · {plan.members}人 · {plan.concurrent}并发
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: 20 }}>
         {plan.perks.map((p, i) => (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: 6 }}>
             <Check style={{ width: 12, height: 12, color: "#22c55e", flexShrink: 0 }} />
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,.5)" }}>{p}</span>
+            <span style={{ fontSize: 12, color: "rgba(255,255,255,.55)" }}>{p}</span>
           </div>
         ))}
       </div>
-    </button>
+      <button style={{ width: "100%", padding: "10px", borderRadius: 10, fontSize: 13, fontWeight: 600, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "white", cursor: "pointer" }}>
+        立即购买
+      </button>
+    </div>
   );
 }
 
-// ─── Main Landing Page ──────────────────────────────────────────────────────────
-export function LandingPage({ navigate }: Nav) {
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState(3); // 星轨小队
-  const [planTab, setPlanTab] = useState<"personal" | "team">("personal");
-
-  const handleLogin = () => { setShowLogin(false); setShowOnboarding(true); };
-
-  const BANNER = { title: "Seedance 2.0 Fast", sub: "最高30秒 · 50个参考素材支持", label: "模型接入", color1: "#ea6020", color2: "#b45309" };
-
+// ─── Banner Carousel (Figma Make) ─────────────────────────────────────────────
+function BannerCarousel() {
+  const [i, setI] = useState(0);
+  const b = BANNERS[i];
+  const prev = () => setI((i - 1 + BANNERS.length) % BANNERS.length);
+  const next = () => setI((i + 1) % BANNERS.length);
   return (
-    <div style={{ minHeight: "100vh", background: "#0a0912", overflow: "auto" }}>
-      {/* ─── Nav ── */}
-      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 32px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between",
-        background: "rgba(10,9,18,.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+    <div style={{ position: "relative", overflow: "hidden", borderBottom: "1px solid rgba(255,255,255,.04)" }}>
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "10px 32px",
+        background: `linear-gradient(90deg, ${b.c1}26 0%, transparent 60%, ${b.c2}26 100%)`,
+        transition: "background .5s",
+      }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg,#ff8c20,#ff5010)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Sparkles style={{ width: 16, height: 16, color: "black" }} />
-          </div>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "white" }}>星核耀火</span>
+          <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 20, background: `${b.c1}40`, color: "white", letterSpacing: "0.04em" }}>
+            {b.label}
+          </span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{b.title}</span>
+          <span style={{ fontSize: 12, color: "rgba(255,255,255,.55)" }}>· {b.sub}</span>
         </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,.35)", marginRight: 6 }}>{i + 1} / {BANNERS.length}</span>
+          <button onClick={prev} aria-label="上一条" style={{ width: 24, height: 24, borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.08)", color: "rgba(255,255,255,.6)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ChevronRight style={{ width: 12, height: 12, transform: "rotate(180deg)" }} />
+          </button>
+          <button onClick={next} aria-label="下一条" style={{ width: 24, height: 24, borderRadius: 8, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.08)", color: "rgba(255,255,255,.6)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <ChevronRight style={{ width: 12, height: 12 }} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Hero Product Mock (right side panel of hero) ──────────────────────────────
+function HeroProductMock() {
+  return (
+    <div style={{
+      position: "relative",
+      width: "100%",
+      aspectRatio: "1.05 / 1",
+      background: "linear-gradient(160deg, rgba(20,16,30,.95) 0%, rgba(12,10,18,.95) 100%)",
+      border: "1px solid rgba(255,138,31,.18)",
+      borderRadius: 20,
+      overflow: "hidden",
+      boxShadow: "0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,138,31,.06)",
+    }}>
+      {/* Glow accents */}
+      <div style={{ position: "absolute", top: "-20%", right: "-20%", width: 280, height: 280, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,138,31,.25), transparent 70%)", filter: "blur(40px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: "-15%", left: "-15%", width: 240, height: 240, borderRadius: "50%", background: "radial-gradient(circle, rgba(255,80,16,.18), transparent 70%)", filter: "blur(30px)", pointerEvents: "none" }} />
+
+      {/* Window header */}
+      <div style={{ position: "relative", padding: "12px 16px", borderBottom: "1px solid rgba(255,255,255,.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <button onClick={() => setShowLogin(true)} style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 500, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.7)", cursor: "none" }}>登录</button>
-          <button onClick={() => setShowRegister(true)} className="btn-primary" style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, border: "none", color: "black", cursor: "none" }}>立即注册</button>
+          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#ff5f57" }} />
+          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#febc2e" }} />
+          <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#28c840" }} />
+          <span style={{ fontSize: 11, color: "rgba(255,255,255,.45)", marginLeft: 10, fontWeight: 600 }}>星核耀火 · 漫剧工作台</span>
         </div>
-      </nav>
+        <div style={{ display: "flex", gap: 6 }}>
+          {["创作", "解析", "画布", "资产"].map(t => (
+            <span key={t} style={{ fontSize: 10, color: t === "创作" ? "#ff8c20" : "rgba(255,255,255,.3)", background: t === "创作" ? "rgba(255,138,31,.12)" : "transparent", padding: "3px 8px", borderRadius: 6, fontWeight: 600 }}>{t}</span>
+          ))}
+        </div>
+      </div>
 
-      {/* ─── Hero ── */}
-      <AuroraCanvas style={{ paddingTop: 64, minHeight: "100vh" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", padding: "80px 32px 60px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "center" }}>
-          <div>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 100, background: "rgba(255,138,31,.1)", border: "1px solid rgba(255,138,31,.25)", marginBottom: 24 }}>
-              <Star style={{ width: 12, height: 12, color: "#ff8c20" }} />
-              <span style={{ fontSize: 12, fontWeight: 600, color: "#ff8c20" }}>注册即送30枚活动星石</span>
-            </div>
-            <h1 style={{ fontSize: 48, fontWeight: 800, color: "white", lineHeight: 1.15, marginBottom: 20, letterSpacing: "-0.02em" }}>
-              AI 视频创作<br />
-              <span style={{ background: "linear-gradient(135deg,#ff8c20,#ffad4a)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>从剧本到成片</span>
-            </h1>
-            <p style={{ fontSize: 16, color: "rgba(255,255,255,.5)", lineHeight: 1.7, marginBottom: 32, maxWidth: 460 }}>
-              剧本智能解析、AI分镜规划、批量视频生成，一站式完成你的影视创作。接入 Seedance 2.0，效率提升 10 倍。
-            </p>
-            <div style={{ display: "flex", gap: 12 }}>
-              <button onClick={() => setShowRegister(true)} className="btn-primary" style={{ padding: "13px 28px", borderRadius: 14, fontSize: 15, fontWeight: 700, border: "none", color: "black", cursor: "none", display: "flex", alignItems: "center", gap: 8 }}>
-                <Zap style={{ width: 16, height: 16 }} />
-                免费开始
-              </button>
-              <button onClick={() => {}} style={{ padding: "13px 28px", borderRadius: 14, fontSize: 15, fontWeight: 500, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.7)", cursor: "none", display: "flex", alignItems: "center", gap: 8 }}>
-                <Play style={{ width: 16, height: 16 }} />
-                观看演示
-              </button>
-            </div>
-            <div style={{ display: "flex", gap: 24, marginTop: 32 }}>
-              {[["10x", "创作效率"], ["500+", "活跃创作者"], ["50+", "参考素材"]].map((stat) => {
-                const v = stat[0];
-                const l = stat[1];
-                return (
-                  <div key={l}>
-                    <div style={{ fontSize: 20, fontWeight: 700, color: "white" }}>{v}</div>
-                    <div style={{ fontSize: 11, color: "rgba(255,255,255,.35)" }}>{l}</div>
-                  </div>
-                );
-              })}
-            </div>
+      {/* Body grid */}
+      <div style={{ position: "relative", padding: 12, display: "grid", gridTemplateColumns: "1fr 1fr", gridTemplateRows: "1fr 1fr", gap: 8, height: "calc(100% - 41px)" }}>
+        {/* Top-left: script parsing */}
+        <div style={{ background: "rgba(255,138,31,.06)", border: "1px solid rgba(255,138,31,.2)", borderRadius: 10, padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <BookOpen style={{ width: 11, height: 11, color: "#ff8c20" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: "white" }}>剧本拆解</span>
+            <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 8, background: "rgba(34,197,94,.15)", color: "#34d399", marginLeft: "auto" }}>● 解析中</span>
           </div>
-
-          {/* Hero Right: Mini feature cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            {[
-              { icon: BookOpen, label: "剧情解析",    sub: "AI 提取场景与角色",       color: "#ff8c20" },
-              { icon: Layers,   label: "分镜规划",    sub: "自动拆解镜头脚本",       color: "#a78bfa" },
-              { icon: Film,     label: "批量生图",    sub: "Seedance 2.0 支持",     color: "#06b6d4" },
-              { icon: Users,    label: "团队协作",    sub: "多人共享项目资产",       color: "#34d399" },
-            ].map(f => (
-              <div key={f.label} style={{ background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.07)", borderRadius: 16, padding: 20, backdropFilter: "blur(10px)" }}>
-                <div style={{ width: 40, height: 40, borderRadius: 12, background: `${f.color}22`, border: `1px solid ${f.color}44`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-                  {(() => {
-                    const Icon = f.icon;
-                    return <Icon style={{ width: 20, height: 20, color: f.color }} />;
-                  })()}
-                </div>
-                <div style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 4 }}>{f.label}</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,.4)" }}>{f.sub}</div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,.45)", lineHeight: 1.4 }}>《回声》 12集 · 36场景</div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 3, marginTop: 4 }}>
+            {["S01 走廊独行", "S02 雨中对话", "S03 办公室"].map((s, i) => (
+              <div key={s} style={{ fontSize: 9, color: i < 2 ? "rgba(255,255,255,.7)" : "rgba(255,255,255,.3)", padding: "3px 6px", borderRadius: 4, background: i < 2 ? "rgba(255,138,31,.08)" : "transparent", display: "flex", alignItems: "center", gap: 4 }}>
+                {i < 2 && <Check style={{ width: 8, height: 8, color: "#22c55e" }} />}
+                {s}
               </div>
             ))}
           </div>
         </div>
 
-        {/* ─── Feature Banner ── */}
-        <div style={{ maxWidth: 720, margin: "0 auto 60px", padding: "0 32px" }}>
-          <div style={{ borderRadius: 20, overflow: "hidden", position: "relative", border: "1px solid rgba(255,255,255,.08)", cursor: "pointer" }}
-            onClick={() => setShowRegister(true)}>
-            <div style={{ height: 180, background: `radial-gradient(ellipse at 20% 50%, ${BANNER.color1}55, ${BANNER.color2}33 60%, #0a0508 100%)`, display: "flex", alignItems: "center", padding: "0 40px" }}>
-              <div style={{ flex: 1 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, padding: "3px 12px", borderRadius: 20, background: `${BANNER.color1}40`, border: `1px solid ${BANNER.color1}60`, color: "white", display: "inline-block", marginBottom: 12 }}>{BANNER.label}</span>
-                <h2 style={{ fontSize: 28, fontWeight: 800, color: "white", marginBottom: 8 }}>{BANNER.title}</h2>
-                <p style={{ fontSize: 14, color: "rgba(255,255,255,.5)" }}>{BANNER.sub}</p>
+        {/* Top-right: character / scene */}
+        <div style={{ background: "rgba(167,139,250,.06)", border: "1px solid rgba(167,139,250,.2)", borderRadius: 10, padding: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <UserCircle2 style={{ width: 11, height: 11, color: "#a78bfa" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: "white" }}>角色与场景</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 4, marginTop: 4 }}>
+            {[
+              { c: "#ff8c20", i: "主" }, { c: "#a78bfa", i: "配" }, { c: "#06b6d4", i: "配" },
+              { c: "#f59e0b", i: "角" }, { c: "#ec4899", i: "角" }, { c: "#10b981", i: "角" },
+            ].map((x, i) => (
+              <div key={i} style={{ aspectRatio: "1/1", borderRadius: 6, background: `linear-gradient(135deg, ${x.c}40, ${x.c}10)`, border: `1px solid ${x.c}55`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "white", fontWeight: 700 }}>
+                {x.i}
               </div>
-              <div style={{ width: 120, height: 120, borderRadius: "50%", background: `${BANNER.color1}33`, filter: "blur(40px)" }} />
+            ))}
+          </div>
+          <div style={{ fontSize: 9, color: "rgba(255,255,255,.4)", marginTop: "auto" }}>6个角色 · 8个场景</div>
+        </div>
+
+        {/* Bottom-left: storyboard */}
+        <div style={{ background: "rgba(6,182,212,.06)", border: "1px solid rgba(6,182,212,.2)", borderRadius: 10, padding: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <Layers style={{ width: 11, height: 11, color: "#06b6d4" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: "white" }}>分镜规划</span>
+            <span style={{ fontSize: 9, padding: "1px 5px", borderRadius: 8, background: "rgba(255,138,31,.15)", color: "#ff8c20", marginLeft: "auto" }}>Seedance</span>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 3, marginTop: 4 }}>
+            {[1,2,3,4,5,6,7,8].map(i => (
+              <div key={i} style={{ aspectRatio: "16/9", borderRadius: 4, background: i < 5 ? "rgba(255,138,31,.15)" : "rgba(255,255,255,.04)", border: `1px solid ${i < 5 ? "rgba(255,138,31,.3)" : "rgba(255,255,255,.06)"}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {i < 5 ? <Play style={{ width: 7, height: 7, color: "#ff8c20" }} /> : <span style={{ fontSize: 7, color: "rgba(255,255,255,.3)" }}>{i}</span>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bottom-right: video gen */}
+        <div style={{ background: "rgba(236,72,153,.06)", border: "1px solid rgba(236,72,153,.2)", borderRadius: 10, padding: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <Film style={{ width: 11, height: 11, color: "#ec4899" }} />
+            <span style={{ fontSize: 10, fontWeight: 700, color: "white" }}>批量生视频</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 8 }}>
+            <div style={{ flex: 1, height: 4, background: "rgba(255,255,255,.08)", borderRadius: 2, overflow: "hidden" }}>
+              <div style={{ width: "65%", height: "100%", background: "linear-gradient(90deg,#ff8c20,#ff5010)", borderRadius: 2 }} />
+            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "#ff8c20" }}>65%</span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 3, marginTop: "auto" }}>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,.45)", display: "flex", justifyContent: "space-between" }}><span>已生成</span><span style={{ color: "white", fontWeight: 600 }}>26/40</span></div>
+            <div style={{ fontSize: 9, color: "rgba(255,255,255,.45)", display: "flex", justifyContent: "space-between" }}><span>本次消耗</span><span style={{ color: "#ff8c20", fontWeight: 600 }}>382 ⭐</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Main Landing Page ──────────────────────────────────────────────────────────
+export function LandingPage({ navigate }: Nav) {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [planTab, setPlanTab] = useState<"personal" | "team">("personal");
+  const [featuredTab, setFeaturedTab] = useState<"hot" | "novel" | "character">("hot");
+  const [categoryTab, setCategoryTab] = useState("全部");
+
+  const CATEGORIES = ["全部", "国内精选", "国外精选", "逆袭爽剧", "都市豪门", "虐恋情仇", "古装古风", "重生复仇"];
+
+  const FEATURED_ITEMS = [
+    { rank: "01", tag: "全站头部爆剧", subTag: "男频玄幻·逆袭",  title: "逆天棋局",     badge: "全网亿级爆品", color: "#ff8c20" },
+    { rank: "02", tag: "全网亿级爆品", subTag: "古装重生·虐恋", title: "她在烽火尽头加冕", badge: "全网亿级爆品", color: "#a78bfa" },
+    { rank: "03", tag: "垂类头部热剧", subTag: "男频仙侠·逆袭", title: "剑域无双",     badge: "垂类头部热剧", color: "#06b6d4" },
+    { rank: "04", tag: "全站头部爆剧", subTag: "民国乱世·都市", title: "旗袍风华",     badge: "全站头部爆剧", color: "#ec4899" },
+    { rank: "05", tag: "年度爆款热剧", subTag: "古装·虐恋情仇", title: "双生花",       badge: "年度爆款热剧", color: "#f59e0b" },
+    { rank: "06", tag: "千万级爆款剧", subTag: "都市·重生复仇", title: "重生之巅峰",   badge: "千万级爆款剧", color: "#34d399" },
+    { rank: "07", tag: "年度爆款热剧", subTag: "古装·虐恋情仇", title: "倾城之恋",     badge: "年度爆款热剧", color: "#a78bfa" },
+    { rank: "08", tag: "垂类头部热剧", subTag: "都市豪门·爽剧", title: "霸总的逆袭",   badge: "垂类头部热剧", color: "#ff8c20" },
+    { rank: "09", tag: "全站头部爆剧", subTag: "古装武侠·国内精选", title: "山河令",   badge: "全站头部爆剧", color: "#06b6d4" },
+    { rank: "10", tag: "全网亿级爆品", subTag: "现代·都市豪门", title: "她的荣耀",     badge: "全网亿级爆品", color: "#ec4899" },
+  ];
+
+  const POSTER_GRADIENT = (c: string) => `linear-gradient(160deg, ${c}aa 0%, ${c}33 50%, rgba(10,8,16,.9) 100%)`;
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#0a0912", overflow: "auto" }}>
+
+      {/* ─── Nav ── */}
+      <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 100, padding: "0 32px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between",
+        background: "rgba(10,9,18,.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg,#ff8c20,#ff5010)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <Sparkles style={{ width: 16, height: 16, color: "black" }} />
+            </div>
+            <span style={{ fontSize: 15, fontWeight: 700, color: "white" }}>星核耀火</span>
+          </div>
+          <div className="landing-nav-center" style={{ display: "flex", alignItems: "center", gap: 24 }}>
+            {["创作", "解析", "画布", "资产", "工具"].map(t => (
+              <button key={t} style={{ background: "none", border: "none", fontSize: 13, color: "rgba(255,255,255,.65)", cursor: "pointer", padding: 0, fontWeight: 500 }}>{t}</button>
+            ))}
+          </div>
+          <div className="landing-nav-extra" style={{ display: "flex", alignItems: "center" }}>
+            <button style={{ background: "none", border: "none", fontSize: 13, color: "rgba(255,255,255,.65)", cursor: "pointer", padding: 0, fontWeight: 500 }}>使用手册</button>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => navigate("login")} style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 500, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.1)", color: "rgba(255,255,255,.7)", cursor: "pointer" }}>注册 / 登录</button>
+          <button onClick={() => navigate("register")} className="btn-primary" style={{ padding: "8px 20px", borderRadius: 10, fontSize: 13, fontWeight: 600, border: "none", color: "black", cursor: "pointer" }}>注册会员</button>
+        </div>
+      </nav>
+
+      {/* ─── Banner Carousel (Figma Make) ── */}
+      <div style={{ paddingTop: 64 }}>
+        <BannerCarousel />
+      </div>
+
+      {/* ─── Hero ── */}
+      <AuroraCanvas style={{ paddingTop: 64, minHeight: "100vh" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 32px 60px", display: "grid", gridTemplateColumns: "1.05fr 1fr", gap: 60, alignItems: "center" }}>
+          <div>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 100, background: "rgba(255,138,31,.1)", border: "1px solid rgba(255,138,31,.25)", marginBottom: 28 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#ff8c20", boxShadow: "0 0 8px #ff8c20" }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: "#ff8c20" }}>AI 漫剧生产平台 · 内测开放中</span>
+            </div>
+            <h1 style={{ fontSize: 56, fontWeight: 800, color: "white", lineHeight: 1.1, marginBottom: 24, letterSpacing: "-0.025em" }}>
+              让故事成剧<br />
+              <span style={{ background: "linear-gradient(135deg,#ff8c20,#ffad4a 60%,#ffd47a)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>让热爱有收获</span>
+            </h1>
+            <p style={{ fontSize: 16, color: "rgba(255,255,255,.55)", lineHeight: 1.7, marginBottom: 36, maxWidth: 520 }}>
+              一站式 AI 漫剧生产平台，贯通剧本拆解、角色与场景资产、分镜、生图、生视频和画质处理，帮助个人创作者与专业团队高效完成整部作品。
+            </p>
+            <div style={{ display: "flex", gap: 12, marginBottom: 40 }}>
+              <button onClick={() => navigate("workspace")} className="btn-primary" style={{ padding: "14px 32px", borderRadius: 14, fontSize: 15, fontWeight: 700, border: "none", color: "black", cursor: "pointer", display: "flex", alignItems: "center", gap: 8, boxShadow: "0 12px 32px rgba(255,138,31,.3)" }}>
+                <Zap style={{ width: 16, height: 16 }} />
+                去工作台
+              </button>
+              <button onClick={() => navigate("register")} style={{ padding: "14px 32px", borderRadius: 14, fontSize: 15, fontWeight: 500, background: "rgba(255,255,255,.06)", border: "1px solid rgba(255,255,255,.12)", color: "rgba(255,255,255,.8)", cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
+                免费注册
+              </button>
+            </div>
+            <div style={{ display: "flex", gap: 28, paddingTop: 24, borderTop: "1px solid rgba(255,255,255,.06)" }}>
+              {[["10x", "创作效率"], ["500+", "活跃创作者"], ["50+", "参考素材支持"]].map(([v, l]) => (
+                <div key={l}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: "white" }}>{v}</div>
+                  <div style={{ fontSize: 11, color: "rgba(255,255,255,.4)" }}>{l}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Hero Right: Product Mock */}
+          <div style={{ position: "relative" }}>
+            <HeroProductMock />
+            {/* Floating badge */}
+            <div style={{ position: "absolute", top: -16, right: -16, padding: "10px 16px", borderRadius: 12, background: "rgba(20,16,30,.95)", border: "1px solid rgba(255,138,31,.3)", display: "flex", alignItems: "center", gap: 8, backdropFilter: "blur(10px)", boxShadow: "0 10px 30px rgba(0,0,0,.5)" }}>
+              <Megaphone style={{ width: 14, height: 14, color: "#ff8c20" }} />
+              <span style={{ fontSize: 11, fontWeight: 600, color: "white" }}>注册即送 30 星石</span>
             </div>
           </div>
         </div>
 
-        {/* ─── Features ── */}
-        <section style={{ maxWidth: 1100, margin: "0 auto", padding: "0 32px 80px" }}>
-          <h2 style={{ fontSize: 28, fontWeight: 700, color: "white", textAlign: "center", marginBottom: 48 }}>全链路 AI 创作平台</h2>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 20 }}>
+        {/* ─── Core Workflow (核心生产流程) ── */}
+        <section style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 32px 40px" }}>
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 100, background: "rgba(255,138,31,.1)", border: "1px solid rgba(255,138,31,.25)", marginBottom: 16 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#ff8c20", letterSpacing: "0.06em" }}>PRODUCTION PIPELINE</span>
+            </div>
+            <h2 style={{ fontSize: 36, fontWeight: 700, color: "white", marginBottom: 14 }}>核心生产流程</h2>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.45)", maxWidth: 600, margin: "0 auto", lineHeight: 1.7 }}>
+              从剧本到成片的完整 AI 工作流，让创作像流水线一样高效
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
             {[
-              { icon: BookOpen, title: "剧情智能解析", desc: "上传视频或剧本，AI 自动提取场景、角色、情绪曲线，生成结构化剧情分析报告。", color: "#ff8c20", accent: "rgba(255,138,32,.1)" },
-              { icon: Layers,   title: "AI 分镜规划", desc: "基于剧情分析，自动拆解分镜脚本，包含镜头类型、景别、运镜方式和时长预估。", color: "#a78bfa", accent: "rgba(167,139,250,.1)" },
-              { icon: Film,     title: "批量视频生成", desc: "接入 Seedance 2.0，支持参考图、角色一致性控制，一次提交多个分镜任务。", color: "#06b6d4", accent: "rgba(6,182,212,.1)" },
-              { icon: Shield,   title: "费用透明预览", desc: "生成前完整展示星石消耗明细，无隐藏费用，支持充值和团队钱包管理。", color: "#22c55e", accent: "rgba(34,197,94,.1)" },
-              { icon: Users,    title: "团队协作空间", desc: "多人项目共享、成员角色管理、权限控制和操作日志，协同创作更高效。", color: "#f59e0b", accent: "rgba(245,158,11,.1)" },
-              { icon: Star,     title: "资产库管理",  desc: "统一管理参考图、角色素材、分镜资产，支持版本管理和标签分类。", color: "#ec4899", accent: "rgba(236,72,153,.1)" },
-            ].map(f => (
-              <div key={f.title} style={{ background: f.accent, border: `1px solid ${f.color}22`, borderRadius: 18, padding: 24 }}>
-                <div style={{ width: 48, height: 48, borderRadius: 14, background: `${f.color}22`, border: `1px solid ${f.color}44`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 16 }}>
-                  {(() => {
-                    const Icon = f.icon;
-                    return <Icon style={{ width: 22, height: 22, color: f.color }} />;
-                  })()}
+              { num: "01", icon: BookOpen,        title: "剧本拆解",     desc: "上传剧本或视频，AI 自动识别场景、角色、情绪曲线，生成结构化剧情分析报告",      color: "#ff8c20" },
+              { num: "02", icon: UserCircle2,     title: "角色与场景",   desc: "沉淀可复用资产库，角色一致性控制，场景视角自动匹配，画面风格统一",            color: "#a78bfa" },
+              { num: "03", icon: Layers,          title: "分镜规划",     desc: "基于剧情自动拆解分镜脚本，镜头类型、景别、运镜方式和时长预估一目了然",       color: "#06b6d4" },
+              { num: "04", icon: Clapperboard,    title: "生图生视频",   desc: "接入 Seedance 2.0，参考图、运镜、时长参数可调，批量任务一站式提交与跟踪",     color: "#ec4899" },
+            ].map((step) => (
+              <div key={step.num} style={{
+                position: "relative", padding: "32px 28px", borderRadius: 20,
+                background: `linear-gradient(160deg, ${step.color}10 0%, rgba(255,255,255,.02) 100%)`,
+                border: `1px solid ${step.color}33`,
+                overflow: "hidden",
+              }}>
+                {/* Large number watermark */}
+                <div style={{ position: "absolute", top: 12, right: 20, fontSize: 64, fontWeight: 900, color: `${step.color}20`, lineHeight: 1, letterSpacing: "-0.04em" }}>
+                  {step.num}
                 </div>
-                <h3 style={{ fontSize: 16, fontWeight: 700, color: "white", marginBottom: 8 }}>{f.title}</h3>
-                <p style={{ fontSize: 13, color: "rgba(255,255,255,.5)", lineHeight: 1.65 }}>{f.desc}</p>
+                <div style={{ width: 48, height: 48, borderRadius: 14, background: `${step.color}22`, border: `1px solid ${step.color}55`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 24 }}>
+                  <step.icon style={{ width: 22, height: 22, color: step.color }} />
+                </div>
+                <div style={{ fontSize: 17, fontWeight: 700, color: "white", marginBottom: 8, position: "relative", zIndex: 1 }}>{step.title}</div>
+                <p style={{ fontSize: 12.5, color: "rgba(255,255,255,.5)", lineHeight: 1.65, position: "relative", zIndex: 1 }}>{step.desc}</p>
+                {/* Tag */}
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 4, marginTop: 18, padding: "4px 10px", borderRadius: 100, background: `${step.color}15`, border: `1px solid ${step.color}30` }}>
+                  <span style={{ fontSize: 10, fontWeight: 600, color: step.color }}>STEP {step.num}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ─── Featured Works (作品展示) ── */}
+        <section style={{ maxWidth: 1200, margin: "0 auto", padding: "60px 32px 80px" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <h2 style={{ fontSize: 32, fontWeight: 700, color: "white", marginBottom: 14 }}>爆款 AI 剧 · 一键改编</h2>
+            <p style={{ fontSize: 13.5, color: "rgba(255,255,255,.45)" }}>热门题材库 + AI 改编工具，让爆款生产效率翻倍</p>
+          </div>
+
+          {/* Tabs */}
+          <div style={{ display: "flex", justifyContent: "center", gap: 8, marginBottom: 24 }}>
+            {([
+              { id: "hot", label: "爆款AI剧", icon: Film },
+              { id: "novel", label: "星推小说", icon: BookOpen },
+              { id: "character", label: "明星角色", icon: UserCircle2 },
+            ] as const).map(t => {
+              const Icon = t.icon;
+              const active = featuredTab === t.id;
+              return (
+                <button key={t.id} onClick={() => setFeaturedTab(t.id)} style={{
+                  padding: "10px 20px", borderRadius: 100, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                  background: active ? "linear-gradient(135deg,#ff8c20,#ff5010)" : "rgba(255,255,255,.04)",
+                  border: `1px solid ${active ? "transparent" : "rgba(255,255,255,.08)"}`,
+                  color: active ? "black" : "rgba(255,255,255,.65)",
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  boxShadow: active ? "0 8px 20px rgba(255,138,31,.3)" : "none",
+                }}>
+                  <Icon style={{ width: 14, height: 14 }} />
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Category filter */}
+          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8, marginBottom: 40 }}>
+            {CATEGORIES.map(c => {
+              const active = categoryTab === c;
+              return (
+                <button key={c} onClick={() => setCategoryTab(c)} style={{
+                  padding: "6px 14px", borderRadius: 100, fontSize: 12, fontWeight: 500, cursor: "pointer",
+                  background: active ? "rgba(255,138,31,.12)" : "transparent",
+                  border: `1px solid ${active ? "rgba(255,138,31,.3)" : "rgba(255,255,255,.06)"}`,
+                  color: active ? "#ff8c20" : "rgba(255,255,255,.45)",
+                }}>
+                  {c}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Cards grid: 1 large + 9 small */}
+          <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr", gridTemplateRows: "auto auto auto", gap: 14 }}>
+            {/* Large featured (top-left spans 2 rows) */}
+            {(() => {
+              const f = FEATURED_ITEMS[0];
+              return (
+                <div style={{
+                  gridRow: "1 / 3", gridColumn: "1",
+                  position: "relative", borderRadius: 18, overflow: "hidden", cursor: "pointer",
+                  background: POSTER_GRADIENT(f.color), border: `1px solid ${f.color}33`,
+                  minHeight: 380, padding: 28, display: "flex", flexDirection: "column", justifyContent: "space-between",
+                }}>
+                  <div style={{ display: "flex", gap: 8 }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: "rgba(255,138,31,.3)", color: "white" }}>★ {f.badge}</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, padding: "3px 10px", borderRadius: 20, background: "rgba(255,255,255,.15)", color: "white" }}>{f.subTag}</span>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 64, fontWeight: 900, color: "rgba(255,255,255,.15)", lineHeight: 1, marginBottom: 12, letterSpacing: "-0.03em" }}>{f.rank}</div>
+                    <h3 style={{ fontSize: 28, fontWeight: 800, color: "white", marginBottom: 8, lineHeight: 1.2 }}>{f.title}</h3>
+                    <p style={{ fontSize: 13, color: "rgba(255,255,255,.65)", marginBottom: 20 }}>{f.tag}</p>
+                    <button className="btn-primary" style={{ padding: "11px 22px", borderRadius: 12, fontSize: 13, fontWeight: 700, border: "none", color: "black", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                      立即改编 <ArrowRight style={{ width: 14, height: 14 }} />
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* 9 small cards */}
+            {FEATURED_ITEMS.slice(1, 10).map((f) => (
+              <div key={f.rank} style={{
+                position: "relative", borderRadius: 14, overflow: "hidden", cursor: "pointer",
+                background: POSTER_GRADIENT(f.color), border: `1px solid ${f.color}22`,
+                padding: 16, display: "flex", flexDirection: "column", justifyContent: "space-between", minHeight: 183,
+              }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
+                  <div style={{ fontSize: 28, fontWeight: 900, color: "rgba(255,255,255,.2)", lineHeight: 1 }}>{f.rank}</div>
+                  <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 10, background: "rgba(255,255,255,.15)", color: "rgba(255,255,255,.85)" }}>{f.subTag.split("·")[1] || f.subTag}</span>
+                </div>
+                <div>
+                  <h4 style={{ fontSize: 14, fontWeight: 700, color: "white", marginBottom: 4, lineHeight: 1.3 }}>{f.title}</h4>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,.5)" }}>{f.tag}</span>
+                    <button style={{ fontSize: 11, fontWeight: 600, color: "#ff8c20", background: "rgba(255,138,31,.15)", border: "1px solid rgba(255,138,31,.3)", padding: "4px 10px", borderRadius: 8, cursor: "pointer" }}>
+                      改编
+                    </button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* ─── Pricing ── */}
-        <section style={{ maxWidth: 900, margin: "0 auto", padding: "0 32px 80px" }}>
-          <h2 style={{ fontSize: 28, fontWeight: 700, color: "white", textAlign: "center", marginBottom: 12 }}>选择适合你的方案</h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,.4)", textAlign: "center", marginBottom: 32 }}>所有方案均支持随时升级，团队版可按需扩展席位</p>
-          <div style={{ display: "flex", gap: 6, marginBottom: 24, justifyContent: "center" }}>
-            {(["personal", "team"] as const).map((k) => {
-              const labelMap = { personal: "个人版", team: "团队版" };
+        <section style={{ maxWidth: 1100, margin: "0 auto", padding: "60px 32px 40px" }}>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, padding: "5px 14px", borderRadius: 100, background: "rgba(255,138,31,.1)", border: "1px solid rgba(255,138,31,.25)", marginBottom: 16 }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: "#ff8c20", letterSpacing: "0.06em" }}>PRICING</span>
+            </div>
+            <h2 style={{ fontSize: 32, fontWeight: 700, color: "white", marginBottom: 12 }}>
+              选择 <span style={{ color: "#ff8c20" }}>创作能量</span> 等级
+            </h2>
+            <p style={{ fontSize: 14, color: "rgba(255,255,255,.45)" }}>个人独立创作 · 或组建团队规模生产 · 团队钱包独立不串账</p>
+          </div>
+
+          <div style={{ display: "flex", gap: 6, marginBottom: 28, justifyContent: "center" }}>
+            {([
+              { k: "personal", l: "个人套餐" },
+              { k: "team", l: "团队套餐（¥299 起）" },
+            ] as const).map(t => {
+              const active = planTab === t.k;
               return (
-                <button key={k} onClick={() => setPlanTab(k)} style={{
-                  padding: "8px 24px", borderRadius: 100, fontSize: 13, fontWeight: 600, cursor: "none",
-                  background: planTab === k ? "rgba(255,255,255,.12)" : "rgba(255,255,255,.04)",
-                  border: `1px solid ${planTab === k ? "rgba(255,255,255,.18)" : "rgba(255,255,255,.06)"}`,
-                  color: planTab === k ? "white" : "rgba(255,255,255,.4)",
-                }}>{labelMap[k]}</button>
+                <button key={t.k} onClick={() => setPlanTab(t.k)} style={{
+                  padding: "9px 22px", borderRadius: 100, fontSize: 13, fontWeight: 600, cursor: "pointer",
+                  background: active ? "rgba(255,138,31,.15)" : "rgba(255,255,255,.04)",
+                  border: `1px solid ${active ? "rgba(255,138,31,.35)" : "rgba(255,255,255,.07)"}`,
+                  color: active ? "#ff8c20" : "rgba(255,255,255,.5)",
+                }}>{t.l}</button>
               );
             })}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 14 }}>
             {(planTab === "personal" ? PLANS_PERSONAL : PLANS_TEAM).map((p, i) => (
-              <PlanCard key={i} plan={p} selected={selectedPlan === i} onSelect={() => setSelectedPlan(i)} />
+              <PlanCard key={i} plan={p} featured={p.hot} />
             ))}
           </div>
-          <div style={{ textAlign: "center", marginTop: 24 }}>
-            <button onClick={() => setShowRegister(true)} className="btn-primary" style={{ padding: "12px 36px", borderRadius: 14, fontSize: 14, fontWeight: 700, border: "none", color: "black", cursor: "none" }}>
-              立即开通 · {planTab === "personal" ? PLANS_PERSONAL[selectedPlan].name : PLANS_TEAM[selectedPlan].name}
+
+          <div style={{ textAlign: "center", marginTop: 32, padding: "16px 24px", borderRadius: 12, background: "rgba(255,138,31,.06)", border: "1px solid rgba(255,138,31,.2)", maxWidth: 700, margin: "32px auto 0" }}>
+            <p style={{ fontSize: 12.5, color: "rgba(255,255,255,.6)", lineHeight: 1.6 }}>
+              <span style={{ color: "#ff8c20", fontWeight: 600 }}>1 元 = 10 付费星石</span> · 实际消耗以生成确认页为准 · 价格版本 2026-08-21
+            </p>
+          </div>
+        </section>
+
+        <FAQSection navigate={navigate} />
+
+        {/* ─── Pre-Footer CTA ── */}
+        <section style={{ padding: "40px 32px 80px" }}>
+          <div style={{ maxWidth: 1100, margin: "0 auto", padding: "32px 40px", borderRadius: 20, background: "linear-gradient(135deg, rgba(255,138,31,.12), rgba(255,80,16,.08))", border: "1px solid rgba(255,138,31,.2)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 20 }}>
+            <div>
+              <h3 style={{ fontSize: 22, fontWeight: 700, color: "white", marginBottom: 6 }}>还有疑问？</h3>
+              <p style={{ fontSize: 13.5, color: "rgba(255,255,255,.55)" }}>查看完整使用手册，了解所有功能与最佳实践</p>
+            </div>
+            <button onClick={() => {}} style={{ padding: "12px 28px", borderRadius: 12, fontSize: 14, fontWeight: 600, background: "rgba(255,255,255,.08)", border: "1px solid rgba(255,255,255,.15)", color: "white", cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 6 }}>
+              查看使用手册 <ArrowRight style={{ width: 14, height: 14 }} />
             </button>
           </div>
         </section>
 
-        <FAQSection />
-
-        {/* ─── CTA ── */}
-        <section style={{ maxWidth: 640, margin: "0 auto", padding: "0 32px 100px", textAlign: "center" }}>
-          <h2 style={{ fontSize: 28, fontWeight: 700, color: "white", marginBottom: 12 }}>开始你的创作之旅</h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,.4)", marginBottom: 28 }}>注册即送 30 枚活动星石，无门槛体验核心功能</p>
-          <button onClick={() => setShowRegister(true)} className="btn-primary" style={{ padding: "14px 40px", borderRadius: 16, fontSize: 15, fontWeight: 700, border: "none", color: "black", cursor: "none" }}>
-            免费注册
-          </button>
-        </section>
-
         {/* ─── Footer ── */}
-        <footer style={{ borderTop: "1px solid rgba(255,255,255,.06)", padding: "24px 32px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 24, height: 24, borderRadius: 6, background: "linear-gradient(135deg,#ff8c20,#ff5010)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Sparkles style={{ width: 12, height: 12, color: "black" }} />
+        <footer style={{ borderTop: "1px solid rgba(255,255,255,.06)", padding: "60px 32px 24px" }}>
+          <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "1.4fr repeat(4,1fr)", gap: 48, marginBottom: 48 }}>
+            <div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                <div style={{ width: 32, height: 32, borderRadius: 9, background: "linear-gradient(135deg,#ff8c20,#ff5010)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <Sparkles style={{ width: 16, height: 16, color: "black" }} />
+                </div>
+                <span style={{ fontSize: 15, fontWeight: 700, color: "white" }}>星核耀火</span>
+              </div>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,.4)", lineHeight: 1.7, marginBottom: 16 }}>
+                AI 漫剧生产平台，让每个故事都能成剧。<br />
+                专注 AI 视频创作工具链 · 服务创作者与团队。
+              </p>
+              <div style={{ display: "flex", gap: 8 }}>
+                {["微信", "微博", "B站", "抖音"].map(p => (
+                  <span key={p} style={{ width: 32, height: 32, borderRadius: 8, background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.08)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, color: "rgba(255,255,255,.45)", cursor: "pointer" }}>{p}</span>
+                ))}
+              </div>
             </div>
-            <span style={{ fontSize: 12, color: "rgba(255,255,255,.3)" }}>星核耀火 · 2026</span>
-          </div>
-          <div style={{ display: "flex", gap: 20 }}>
-            {["用户协议", "隐私政策", "联系我们"].map(l => (
-              <a key={l} href="#" style={{ fontSize: 12, color: "rgba(255,255,255,.3)", textDecoration: "none" }}>{l}</a>
+            {[
+              { title: "产品", items: ["产品介绍", "创作工作台", "剧情解析", "画布协作"] },
+              { title: "资源", items: ["使用手册", "帮助中心", "API 文档", "更新日志"] },
+              { title: "公司", items: ["关于我们", "商务合作", "加入我们", "媒体联系"] },
+              { title: "法律", items: ["用户协议", "隐私政策", "版权声明", "内容规范"] },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "white", marginBottom: 16, letterSpacing: "0.04em" }}>{col.title}</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {col.items.map(item => (
+                    <a key={item} href="#" style={{ fontSize: 12.5, color: "rgba(255,255,255,.45)", textDecoration: "none" }}>{item}</a>
+                  ))}
+                </div>
+              </div>
             ))}
+          </div>
+          <div style={{ maxWidth: 1200, margin: "0 auto", paddingTop: 24, borderTop: "1px solid rgba(255,255,255,.06)", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,.3)" }}>© 2026 星核耀火 · 让创作更简单</span>
+            </div>
+            <div style={{ display: "flex", gap: 20 }}>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,.3)" }}>京 ICP 备 2026000001 号</span>
+              <span style={{ fontSize: 12, color: "rgba(255,255,255,.3)" }}>京公网安备 11010102000000 号</span>
+            </div>
           </div>
         </footer>
       </AuroraCanvas>
 
       {/* ─── Modals ── */}
-      {showLogin && <LoginModal onClose={() => setShowLogin(false)} onSwitch={() => { setShowLogin(false); setShowRegister(true); }} onLogin={handleLogin} />}
-      {showRegister && <RegisterModal onClose={() => setShowRegister(false)} onSwitch={() => { setShowRegister(false); setShowLogin(true); }} />}
       {showOnboarding && <OnboardingModal onDone={() => { setShowOnboarding(false); navigate("workspace"); }} />}
+      {/* ─── Responsive Nav Styles ── */}
+      <style>{`
+        @media (max-width: 900px) {
+          .landing-nav-center { display: none !important; }
+        }
+        @media (max-width: 640px) {
+          .landing-nav-extra { display: none !important; }
+        }
+        @media (max-width: 480px) {
+          .landing-hero-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+          .landing-hero-right { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
