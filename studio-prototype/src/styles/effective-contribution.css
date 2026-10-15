@@ -1,0 +1,20 @@
+.contribution-bar.effective-contribution,
+.carousel-slides .production-tile .contribution-bar.effective-contribution,
+.display-widget .production-tile .contribution-bar.effective-contribution { height:24px; margin-top:8px; gap:5px; padding:0; align-items:center; }
+.effective-contribution .contribution-segment { position:relative; height:24px; overflow:visible; background:transparent; box-shadow:none; border-radius:0; }
+.effective-contribution .contribution-segment::before { content:''; position:absolute; top:9px; left:0; right:0; height:6px; border-radius:999px; background:var(--tone); box-shadow:0 0 7px color-mix(in srgb,var(--tone) 24%,transparent); transition:box-shadow 160ms ease; }
+.effective-contribution .contribution-segment:hover::before,.effective-contribution .contribution-segment:focus-visible::before { box-shadow:0 0 11px color-mix(in srgb,var(--tone) 46%,transparent); }
+.effective-contribution .contribution-segment>span { position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); }
+.contribution-legend.effective-contribution-legend,
+.carousel-slides .production-tile .contribution-legend.effective-contribution-legend,
+.display-widget .production-tile .contribution-legend.effective-contribution-legend { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:14px; margin-top:5px; }
+.effective-contribution-legend>span { display:grid; grid-template-columns:6px minmax(0,1fr); column-gap:7px; row-gap:5px; align-items:center; }
+.effective-contribution-legend .dot { width:5px; height:5px; box-shadow:0 0 6px color-mix(in srgb,var(--tone) 30%,transparent); }
+.effective-person { display:flex; align-items:baseline; justify-content:space-between; gap:8px; font-size:12px; color:var(--text); }
+.effective-person b { color:var(--secondary); font:500 13px/1.3 var(--font-display); }
+.effective-duration { grid-column:2; color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
+.effective-duration small { font-size:10px; margin-left:5px; }
+.display-widget .effective-contribution .contribution-segment::before { height:8px; top:8px; }
+.display-widget .effective-person { font-size:15px; }
+.display-widget .effective-person b { font-size:16px; }
+.display-widget .effective-duration,.display-widget .effective-duration small { font-size:12px; }

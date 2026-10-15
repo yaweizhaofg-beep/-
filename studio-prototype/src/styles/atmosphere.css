@@ -1,0 +1,90 @@
+/* Hallmark · macrostructure: production workbench · tone: luminous glass · anchor hue: violet */
+:root {
+  --aurora-violet: #9251ff;
+  --aurora-mint: #25e2bc;
+  --aurora-rose: #e455b8;
+  --glass-clear: rgba(24,20,36,.47);
+  --glass-rim: rgba(235,219,255,.22);
+  --motion-aurora: 26s;
+}
+body { isolation:isolate; }
+body::before { display:none; }
+#app { position:relative; z-index:1; }
+.atmosphere { position:fixed; inset:0; overflow:hidden; pointer-events:none; z-index:0; background:#100d19; contain:strict; }
+.aurora { position:absolute; width:100vw; height:40vh; border-radius:50%; filter:blur(65px); opacity:.28; will-change:transform; animation:aurora-drift var(--motion-aurora) ease-in-out infinite alternate; }
+.aurora-violet { left:-28%; top:-14%; background:radial-gradient(ellipse,var(--aurora-violet),transparent 66%); transform:rotate(-25deg); }
+.aurora-mint { right:-35%; top:14%; background:radial-gradient(ellipse,var(--aurora-mint),transparent 66%); animation-duration:34s; animation-delay:-14s; opacity:.17; }
+.aurora-rose { left:15%; bottom:-20%; background:radial-gradient(ellipse,var(--aurora-rose),transparent 66%); animation-duration:31s; animation-delay:-9s; opacity:.16; }
+.starfield { position:absolute; inset:0; opacity:.38; background:radial-gradient(1px 1px at 16% 16%,#fff 50%,transparent),radial-gradient(1px 1px at 68% 12%,#dfcaff 50%,transparent),radial-gradient(1px 1px at 88% 43%,#fff 50%,transparent),radial-gradient(1px 1px at 34% 71%,#b6f5ee 50%,transparent),radial-gradient(1px 1px at 75% 87%,#fff 50%,transparent); background-size:570px 490px; }
+.meteor { position:absolute; top:0; left:85%; width:170px; height:1px; opacity:0; background:linear-gradient(90deg,#fff,rgba(189,151,255,.64) 28%,transparent); box-shadow:0 0 12px rgba(205,170,255,.55); animation:meteor-pass 19s linear 3s infinite; }
+.meteor::before { content:''; position:absolute; left:0; top:-1px; width:3px; height:3px; border-radius:50%; background:#fff; box-shadow:0 0 8px #e7d2ff; }
+.meteor-two { left:55%; top:8%; width:120px; animation-duration:27s; animation-delay:11s; }
+.meteor-three { left:98%; top:35%; width:140px; animation-duration:33s; animation-delay:21s; }
+@keyframes aurora-drift { 0% { transform:translate3d(-5%,-5%,0) rotate(-24deg) scale(.96); } 50% { transform:translate3d(12%,18%,0) rotate(-10deg) scale(1.16); } 100% { transform:translate3d(-2%,36%,0) rotate(-32deg) scale(1.05); } }
+@keyframes meteor-pass { 0%,1% { opacity:0; transform:translate3d(0,0,0) rotate(-35deg); } 2% { opacity:.8; } 8% { opacity:0; transform:translate3d(-56vw,39vw,0) rotate(-35deg); } 100% { opacity:0; transform:translate3d(-56vw,39vw,0) rotate(-35deg); } }
+
+.glass { background:linear-gradient(128deg,rgba(167,116,235,.12),rgba(255,255,255,.025) 38%,rgba(46,201,177,.025)),var(--glass-clear); border-color:var(--glass-rim); backdrop-filter:blur(26px) saturate(155%); box-shadow:inset 0 1px rgba(255,255,255,.22),inset 1px 0 rgba(255,255,255,.045),0 12px 40px rgba(4,2,10,.2); }
+.hero-card::before { background:radial-gradient(ellipse at 86% 0,color-mix(in srgb,var(--tone) 19%,transparent),transparent 58%); }
+.sidebar { background:rgba(24,20,35,.48); backdrop-filter:blur(26px); }
+.metric-item { background:linear-gradient(130deg,rgba(255,255,255,.065),rgba(255,255,255,.012)); backdrop-filter:blur(15px); }
+.metric-focus { background:radial-gradient(ellipse at 80% 0,rgba(237,170,255,.27),transparent 65%),linear-gradient(125deg,rgba(139,65,230,.55),rgba(95,55,174,.2)); }
+.contribution-segment { background:linear-gradient(180deg,color-mix(in srgb,var(--tone) 65%,white),var(--tone) 46%,color-mix(in srgb,var(--tone-deep) 72%,var(--tone))); }
+.display-viewport { background:transparent; }
+.display-stage { background:radial-gradient(ellipse at 12% 10%,rgba(146,81,255,.1),transparent 60%); }
+
+.instruments { margin:0 0 26px; padding:20px 24px 15px; }
+.instrument-live { display:inline-flex; align-items:center; gap:7px; font-size:10px; color:var(--secondary); }
+.instrument-live i { width:5px; height:5px; background:var(--mint); border-radius:50%; box-shadow:0 0 8px var(--mint); animation:signal-breathe 3s ease-in-out infinite; }
+.instrument-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:32px; align-items:center; }
+.gauge-group { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+.gauge { min-width:0; text-align:center; }
+.gauge-face { position:relative; max-width:138px; margin:auto; aspect-ratio:1; color:var(--tone); }
+.gauge-face svg { width:100%; height:100%; overflow:visible; }
+.gauge-face circle { fill:none; }
+.gauge-track { stroke:rgba(255,255,255,.07); stroke-width:7; }
+.gauge-value { stroke:var(--tone); stroke-width:7; stroke-linecap:round; transform:rotate(-90deg); transform-origin:center; filter:drop-shadow(0 0 5px var(--tone-soft)); }
+.gauge-orbit { stroke:var(--tone); stroke-opacity:.45; stroke-width:.8; stroke-dasharray:3 12 1 24; transform-origin:center; animation:gauge-orbit 45s linear infinite; }
+.gauge-face>div { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.gauge-face strong { color:var(--text); font-family:var(--font-display); font-size:28px; font-weight:500; line-height:1.2; }
+.gauge-face strong small { font-size:11px; margin-left:2px; }
+.gauge-face span { font-size:10px; color:var(--secondary); margin-top:5px; }
+.gauge>p { font-size:10px; color:var(--muted); margin-top:5px; }
+.gauge>p b { color:var(--tone); font-weight:500; }
+.output-trend { min-width:0; padding-left:24px; border-left:1px solid var(--edge); }
+.trend-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:11px; color:var(--secondary); }
+.trend-heading strong { font-size:25px; font-weight:500; color:var(--mint); }
+.trend-heading small { font-size:10px; margin-left:5px; }
+.trend-chart { display:block; width:100%; height:124px; color:var(--mint); overflow:visible; }
+.chart-grid { fill:none; stroke:var(--edge); stroke-width:.7; stroke-dasharray:3 5; }
+.trend-line { fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 0 4px rgba(86,240,206,.28)); }
+.trend-end { fill:currentColor; animation:signal-breathe 3s ease-in-out infinite; }
+.trend-axis { display:flex; justify-content:space-between; gap:8px; font-size:9px; color:var(--muted); }
+.instrument-note { margin-top:16px; color:var(--muted); font-size:9px; }
+@keyframes gauge-orbit { to { transform:rotate(360deg); } }
+@keyframes signal-breathe { 0%,100% { opacity:.5; } 50% { opacity:1; } }
+.display-widget[data-type=instruments] { padding:0; }
+.display-widget .instruments { height:100%; margin:0; border:0; border-radius:0; padding:20px; background:transparent; box-shadow:none; }
+.display-widget .instrument-grid { grid-template-columns:1fr; gap:15px; }
+.display-widget .output-trend { border-left:0; padding-left:0; }
+.display-widget .gauge-face { max-width:110px; }
+.display-widget .trend-chart { height:100px; }
+
+@media (max-width:1100px) { .instrument-grid { grid-template-columns:1fr; gap:20px; }.output-trend { padding:14px 0 0; border-left:0; border-top:1px solid var(--edge); }.gauge-face { max-width:120px; } }
+@media (max-width:760px) {
+  .app-shell { grid-template-columns:64px minmax(0,1fr); }
+  .sidebar { position:sticky; inset:auto; top:0; width:64px; height:100vh; min-height:100vh; padding:16px 6px; flex-direction:column; border-top:0; border-right:1px solid var(--edge); background:rgba(24,20,35,.48); }
+  .sidebar>.brand-mark { display:grid; }.sidebar-bottom { display:flex; }
+  .nav-items { flex-direction:column; }
+  .page { padding-bottom:24px; }
+  .instruments { padding:16px 12px; margin-bottom:20px; }
+  .gauge-group { gap:7px; }.gauge-face strong { font-size:24px; }.gauge-face span { font-size:9px; }.gauge>p { font-size:9px; }
+  .hero-card { grid-template-columns:135px minmax(0,1fr); }.hero-content h2 { font-size:27px; }
+}
+@media (max-width:520px) {
+  .topbar { height:auto; min-height:94px; padding:15px 0; flex-wrap:wrap; gap:10px; }.topbar-center { width:100%; margin:0; justify-content:space-between; }
+  .metric-strip { grid-template-columns:repeat(2,minmax(0,1fr)); }.metric-item:nth-child(4) { padding-left:10px; }
+  .hero-card { grid-template-columns:85px minmax(0,1fr); }.hero-content h2 { font-size:21px; }.hero-content { padding:5px 8px; }.contribution-segment { font-size:8px; }
+  .gauge-face strong { font-size:20px; }.gauge-face span { font-size:8px; }.gauge>p { font-size:8px; }.trend-axis span:nth-child(2) { display:none; }
+}
+.simple-material .atmosphere { display:none; }
+@media (prefers-reduced-motion:reduce) { .aurora,.meteor,.gauge-orbit,.instrument-live i,.trend-end { animation:none!important; }.meteor { display:none; }.aurora-violet { transform:rotate(-25deg); } }

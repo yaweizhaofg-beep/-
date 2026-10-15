@@ -1,0 +1,43 @@
+.overview-tasks { display:flex; flex-direction:column; }
+.workforce-carousel { display:flex; flex-direction:column; flex:1; min-height:0; }
+.workforce-carousel .carousel-slides { flex:1; min-height:0; }
+.workforce-slide { display:flex; flex-direction:column; gap:14px; }
+.workforce-group-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--edge); }
+.workforce-group-heading h3 { display:flex; align-items:center; gap:12px; margin:0; white-space:nowrap; }
+.workforce-group-heading h3>span { color:var(--accent); font-size:15px; padding-left:12px; border-left:1px solid var(--edge-strong); }
+.workforce-slide>.workforce-group-heading { margin-bottom:0; flex-shrink:0; }
+.workforce-group-heading>span { font-size:12px; color:var(--muted); }
+.workforce-members { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; max-height:320px; overflow:auto; }
+.workforce-member { min-width:0; padding:10px; border-radius:9px; background:var(--white-soft); border:1px solid var(--edge); }
+.workforce-member-name { display:flex; align-items:center; gap:7px; margin-bottom:7px; }
+.workforce-member-name strong { font-size:13px; font-weight:500; }
+.workforce-member-name .avatar.small { width:23px; height:23px; font-size:9px; }
+.workforce-member-projects { display:flex; flex-direction:column; gap:6px; }
+.workforce-member-projects>div { display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:12px; min-width:0; }
+.workforce-member-projects>div>span { min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.workforce-state { font-size:11px; color:var(--secondary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:65%; flex-shrink:0; }
+.workforce-state-running { color:var(--accent); }
+.workforce-state-review { color:var(--peach); }
+.workforce-state-completed { color:var(--mint); }
+.workforce-carousel .carousel-controls { flex-shrink:0; }
+.display-widget[data-type=tasks] { display:flex; flex-direction:column; padding:16px; }
+.display-widget[data-type=tasks]>.section-title { flex-shrink:0; margin-bottom:12px; }
+.display-widget .workforce-carousel [data-slide]:not([hidden]) { height:100%; }
+.display-widget .workforce-slide { height:100%; min-height:0; gap:10px; }
+.display-widget .workforce-group-heading { padding-bottom:8px; flex-shrink:0; }
+.display-widget .workforce-group-heading h3 { font-size:23px; gap:10px; }
+.display-widget .workforce-group-heading h3>span { font-size:18px; padding-left:10px; }
+.display-widget .workforce-group-heading>span { font-size:13px; }
+.display-widget .workforce-members { flex:1; min-height:0; max-height:none; overflow:auto; gap:6px; grid-auto-rows:max-content; align-content:start; }
+.display-widget .workforce-member { padding:7px 8px; }
+.display-widget .workforce-member-name { margin-bottom:4px; }
+.display-widget .workforce-member-name strong { font-size:14px; }
+.display-widget .workforce-member-name .avatar.small { width:20px; height:20px; font-size:9px; }
+.display-widget .workforce-member-projects { gap:4px; }
+.display-widget .workforce-member-projects>div { font-size:12px; }
+.display-widget .workforce-state { font-size:11px; }
+.display-widget .workforce-carousel .carousel-controls { margin-top:8px; font-size:12px; }
+.display-widget .workforce-carousel .carousel-controls select { min-height:28px; padding:5px; font-size:12px; }
+.display-widget .workforce-carousel .carousel-controls button { padding:5px 8px; min-height:28px; }
+.display-widget[data-type=tasks]>.panel-note { display:none; }
+@media(max-width:560px) { .overview-tasks .workforce-members { grid-template-columns:1fr; } }

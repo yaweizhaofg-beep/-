@@ -1,0 +1,6 @@
+import { escape } from './common.js';
+import { rotationSeconds } from '../domain/screen-scope.js';
+export function carousel(cards, {intervalSeconds=30,kind='production',label='剧目制作进度'}={}) {
+  const seconds=rotationSeconds(intervalSeconds);
+  return `<div class="production-carousel ${kind==='release'?'release-carousel':kind==='workforce'?'workforce-carousel':''}" data-carousel data-interval="${seconds}" aria-roledescription="轮播" aria-label="${escape(label)}"><div class="carousel-slides">${cards.map((card,index)=>`<div data-slide="${index}" ${index?'hidden':''} aria-label="第${index+1}${kind==='workforce'?'组':'部'}，共${cards.length}${kind==='workforce'?'组':'部'}">${card}</div>`).join('')}</div><div class="carousel-controls"><span><select data-carousel-interval aria-label="${kind==='workforce'?'小组轮播间隔':'剧目轮播间隔'}">${[15,30,60].map(value=>`<option value="${value}" ${value===seconds?'selected':''}>${value}秒轮播</option>`).join('')}</select> · <b data-carousel-count>1 / ${cards.length}</b></span><div><button data-carousel-step="-1" aria-label="${kind==='workforce'?'上一组':'上一部'}" ${cards.length<2?'disabled':''}>←</button><button data-carousel-pause aria-label="暂停轮播" aria-pressed="false">暂停</button><button data-carousel-step="1" aria-label="${kind==='workforce'?'下一组':'下一部'}" ${cards.length<2?'disabled':''}>→</button></div></div></div>`;
+}
