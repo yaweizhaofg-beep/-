@@ -1,0 +1,36 @@
+.model-consumption { min-width:0; }
+.model-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:12px 0 18px; flex-wrap:wrap; }
+.model-periods { display:flex; gap:4px; padding:3px; border:1px solid var(--edge); border-radius:9px; background:var(--white-soft); }
+.model-periods .button { padding:6px 10px; min-height:29px; font-size:11px; border:0; }
+.model-toolbar>select { max-width:180px; min-width:125px; padding:8px 10px; min-height:36px; font-size:11px; }
+.model-custom-range { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:-4px 0 16px; font-size:10px; color:var(--muted); }
+.model-custom-range input { width:130px; min-width:0; min-height:32px; font-size:11px; padding:6px; }.model-custom-range .button { font-size:11px; min-height:32px; padding:6px 12px; }
+.model-consumption-body { display:grid; grid-template-columns:180px minmax(0,1fr); align-items:center; gap:22px; min-width:0; }
+.model-donut { position:relative; width:180px; height:180px; justify-self:center; }.model-donut svg { display:block; width:100%; height:100%; transform:rotate(-90deg); overflow:visible; }
+.model-donut-segment { filter:drop-shadow(0 0 5px rgba(139,230,190,.15)); transition:opacity 180ms ease; }.model-donut-segment.dimmed { opacity:.2; }
+.model-donut>div { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:5px; pointer-events:none; }
+.model-donut span { font-size:10px; color:var(--secondary); }.model-donut strong { font:500 29px/1.2 var(--font-display); color:#a2e8c8; }.model-donut small { font-size:10px; color:var(--muted); }
+.model-legend { display:grid; gap:12px; max-height:210px; overflow:auto; min-width:0; padding:2px; }.model-legend-row { text-align:left; background:var(--white-soft); border:1px solid var(--edge); border-radius:10px; padding:12px; min-width:0; cursor:pointer; }.model-legend-row.selected,.model-legend-row:hover { border-color:var(--model-color); background:color-mix(in srgb,var(--model-color) 7%,transparent); }
+.model-legend-row>div { display:flex; gap:7px; align-items:center; min-width:0; }.model-legend-row i { width:6px; height:6px; flex-shrink:0; border-radius:50%; background:var(--model-color); box-shadow:0 0 8px color-mix(in srgb,var(--model-color) 30%,transparent); }.model-legend-row strong { font-size:12px; font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--text); }.model-legend-row>div>span { margin-left:auto; color:var(--model-color); font-size:12px; white-space:nowrap; }.model-legend-row p { display:flex; align-items:center; justify-content:space-between; gap:8px; color:var(--secondary); font-size:10px; margin:10px 0 0; }.model-legend-row b { color:var(--text); font-size:11px; font-weight:500; white-space:nowrap; }
+.model-no-data { font-size:12px; color:var(--muted); text-align:center; line-height:1.8; }
+.model-period-metrics { display:grid; grid-template-columns:1fr 1.1fr .8fr; gap:12px; padding-top:18px; margin-top:18px; border-top:1px solid var(--edge); }.model-period-metrics>div>span { display:block; font-size:10px; color:var(--secondary); margin-bottom:7px; }.model-period-metrics strong { font:500 22px/1.3 var(--font-display); color:var(--text); }.model-period-metrics small { color:var(--muted); font-size:10px; margin-left:4px; }
+.model-consumption-note { color:var(--muted); font-size:10px; line-height:1.7; margin:16px 0 0; }
+.display-widget .model-consumption { height:100%; display:flex; flex-direction:column; padding:20px; border:0; box-shadow:none; background:none; border-radius:inherit; }
+.display-widget .model-consumption .section-title { margin-bottom:5px; }.display-widget .model-consumption .section-title h3 { font-size:23px; }
+.display-widget .model-toolbar { margin:8px 0 10px; gap:12px; }.display-widget .model-periods .button { font-size:14px; padding:6px 12px; }.display-widget .model-toolbar>select { font-size:13px; max-width:200px; }
+.display-widget .model-consumption-body { flex:1; min-height:0; grid-template-columns:180px minmax(0,1fr); gap:18px; }.display-widget .model-donut { width:180px; height:180px; }.display-widget .model-donut span { font-size:12px; }.display-widget .model-donut strong { font-size:30px; }.display-widget .model-donut small { font-size:11px; }
+.display-widget .model-legend { max-height:180px; }.display-widget .model-legend-row strong { font-size:16px; }.display-widget .model-legend-row>div>span { font-size:15px; }.display-widget .model-legend-row p { font-size:12px; }.display-widget .model-legend-row b { font-size:13px; }
+.display-widget .model-period-metrics { margin-top:10px; padding-top:10px; }.display-widget .model-period-metrics strong { font-size:27px; }.display-widget .model-period-metrics>div>span { font-size:12px; }.display-widget .model-consumption-note { font-size:11px; margin-top:8px; line-height:1.5; }
+.display-widget .model-custom-range { margin:0 0 6px; }.display-widget .model-custom-range input { font-size:13px; width:160px; }
+@media(max-width:1100px) { .model-consumption-body { grid-template-columns:150px minmax(0,1fr); gap:12px; }.model-donut { width:150px; height:150px; }.model-donut strong { font-size:25px; } }
+@media(max-width:600px) { .model-consumption-body { grid-template-columns:1fr; }.model-donut { width:180px; height:180px; }.model-legend { width:100%; }.model-period-metrics { gap:8px; }.model-period-metrics strong { font-size:21px; } }
+/* Keep date controls, ring and values readable inside the saved TV grid cell. */
+.display-widget .model-consumption { padding:14px; overflow:auto; }
+.display-widget .model-consumption .section-title h3 { font-size:22px; line-height:1.25; }
+.display-widget .model-toolbar { margin:5px 0 8px; }
+.display-widget .model-toolbar>select { min-height:32px; font-size:12px; }
+.display-widget .model-periods .button { font-size:13px; min-height:28px; }
+.display-widget .model-consumption-body { grid-template-columns:144px minmax(0,1fr); gap:16px; }
+.display-widget .model-donut { width:144px; height:144px; }.display-widget .model-donut strong { font-size:26px; }.display-widget .model-donut span { font-size:10px; }
+.display-widget .model-legend { max-height:144px; gap:8px; }.display-widget .model-legend-row { padding:9px 10px; }.display-widget .model-legend-row strong { font-size:14px; }.display-widget .model-legend-row p { font-size:11px; margin-top:8px; }
+.display-widget .model-period-metrics { margin-top:8px; padding-top:8px; }.display-widget .model-period-metrics>div>span { font-size:11px; line-height:1.3; margin-bottom:4px; }.display-widget .model-period-metrics strong { font-size:24px; line-height:1.1; }.display-widget .model-consumption-note { font-size:10px; line-height:1.4; margin-top:6px; }

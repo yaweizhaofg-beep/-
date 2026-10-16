@@ -1,0 +1,117 @@
+/* Solid emissive data marks. Ambient gradients belong to the background only. */
+.contribution-segment {
+  background:var(--tone); border:0; border-radius:5px;
+  box-shadow:0 0 12px color-mix(in srgb,var(--tone) 42%,transparent);
+  color:#140e20; text-shadow:none;
+}
+.contribution-bar { overflow:visible; background:transparent; box-shadow:none; gap:4px; padding:0; }
+.production-progress>span,.team-track span,.progress-track>span { background:var(--tone,var(--mint)); box-shadow:0 0 10px color-mix(in srgb,var(--tone,var(--mint)) 45%,transparent); }
+.production-carousel { min-width:0; }
+.carousel-slides>[hidden] { display:none!important; }
+.carousel-slides .production-tile { padding:24px; }
+.carousel-slides .production-main { align-items:center; gap:18px; }
+.carousel-slides .production-main>.poster { width:72px; height:100px; flex-shrink:0; }
+.carousel-slides .project-title { font-size:22px; }
+.carousel-slides .production-copy>div { flex-wrap:wrap; gap:8px; }
+.carousel-slides .production-copy p { font-size:12px; margin:12px 0; }
+.carousel-slides .production-main>strong { font-size:36px; }
+.carousel-slides .production-main>strong small { font-size:12px; }
+.carousel-slides .production-tile .contribution-bar { height:34px; margin-top:24px; padding:0; }
+.carousel-slides .production-tile .contribution-segment { font-size:13px; }
+.carousel-slides .production-tile .contribution-legend { flex-wrap:wrap; gap:12px; margin-top:16px; }
+.carousel-slides .production-tile .contribution-legend>span,.carousel-slides .production-tile .contribution-legend small { font-size:11px; }
+.carousel-controls { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; color:var(--secondary); font-size:11px; }
+.carousel-controls>div { display:flex; gap:6px; }
+.carousel-controls button { background:var(--white-soft); border:1px solid var(--edge); border-radius:8px; padding:7px 12px; color:var(--text); cursor:pointer; }
+.carousel-controls button:disabled { opacity:.35; cursor:default; }
+.carousel-controls button:hover { border-color:var(--accent); }
+.screen-module-picker { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:22px 0; }
+.screen-module-picker label { display:flex; align-items:center; gap:10px; padding:18px 14px; border:1px solid var(--edge); border-radius:12px; font-size:13px; cursor:pointer; }
+.screen-module-picker label:has(:checked) { border-color:var(--accent); background:var(--accent-soft); }
+.screen-module-picker input { accent-color:var(--mint); width:16px; height:16px; }
+.widget-add.is-selected { border-color:var(--accent); color:var(--text); background:var(--accent-soft); }
+.move-controls { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:20px; }
+.editor-widget { cursor:grab; }.editor-widget:active { cursor:grabbing; }
+.display-widget .carousel-slides .production-main>.poster { width:84px; height:114px; }
+.display-widget .carousel-slides .production-tile { padding:18px; }
+.display-widget .carousel-controls { font-size:15px; }
+.display-widget .carousel-controls button { font-size:16px; }
+@media(max-width:1100px) {
+  .carousel-slides .production-main { gap:12px; }
+  .carousel-slides .project-title { font-size:18px; }
+  .carousel-slides .production-main>strong { font-size:28px; }
+}
+@media(max-width:600px) {
+  .screen-module-picker { grid-template-columns:1fr; }
+  .carousel-slides .production-tile { padding:16px; }
+  .carousel-slides .production-main { flex-wrap:wrap; }
+  .carousel-slides .production-main>strong { margin-left:auto; }
+  .carousel-slides .production-tile .contribution-segment { font-size:11px; }
+}
+/* Four release cards share two clear rows inside a dashboard cell. */
+.display-widget[data-type=release] .release-gallery { grid-template-columns:repeat(2,minmax(0,1fr)); grid-auto-rows:1fr; gap:12px; }
+.display-widget .release-tile { padding:12px; min-height:0; }
+.display-widget .release-title { gap:5px; }
+.display-widget .release-title strong { font-size:18px; line-height:1.4; }
+.display-widget .release-title>span { font-size:11px; margin:2px 0 0; }
+.display-widget .release-numbers { gap:6px; margin-top:12px; }
+.display-widget .release-numbers b { font-size:23px; line-height:1.4; }
+.display-widget .release-numbers small { font-size:12px; margin-top:5px; }
+.display-widget .production-tile .contribution-legend { display:flex; }
+.advanced-layout { margin-top:16px; }.advanced-layout summary { cursor:pointer; color:var(--secondary); font-size:11px; margin-bottom:12px; }
+
+/* Dedicated contribution palette, shared by bars and their legends. */
+.contribution-violet { --tone:#be78ff; }
+.contribution-peach { --tone:#ffb54a; }
+.contribution-pink { --tone:#ff57bc; }
+.contribution-mint { --tone:#22efc5; }
+.contribution-blue { --tone:#52ceff; }
+
+.initial-loading { flex-direction:column; gap:18px; text-align:center; padding:32px; }.initial-loading p { color:var(--secondary); max-width:640px; overflow-wrap:anywhere; font-size:14px; }.initial-loading a { color:var(--mint); }
+.screen-scope-picker { border:0; padding:0; margin:0 0 22px; min-width:0; }
+.screen-scope-picker legend { color:var(--secondary); font-size:12px; margin-bottom:12px; }
+.screen-scope-picker label { display:flex; gap:8px; align-items:center; margin:8px 0; padding:8px; border:1px solid var(--edge); border-radius:8px; font-size:12px; cursor:pointer; }
+.screen-scope-picker label:has(:checked) { background:var(--accent-soft); border-color:var(--edge-strong); }
+.screen-scope-picker input { min-height:0; width:14px; height:14px; accent-color:var(--mint); }
+.screen-scope-picker small { display:block; font-size:10px; color:var(--muted); margin-top:10px; line-height:1.7; }
+.carousel-controls select { color:var(--secondary); background:var(--input); border:1px solid var(--edge); border-radius:7px; padding:5px 7px; font:inherit; }
+/* Display-local particles: meteor travel, then a lingering star flare. */
+.screen-sky { position:absolute; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+.screen-shower { position:absolute; left:var(--start-x); top:var(--start-y); }
+.screen-meteor { position:absolute; width:160px; height:2px; opacity:0; background:linear-gradient(90deg,#efffff,rgba(168,220,240,.65),transparent); box-shadow:0 0 12px #bde4ff; animation:screen-shoot var(--flight) linear var(--wait) infinite; }
+.screen-afterglow { position:absolute; left:-600px; top:350px; width:4px; height:4px; border-radius:50%; background:#e4f6ff; opacity:0; box-shadow:0 0 8px #fff,0 0 22px rgba(170,222,255,.8); animation:screen-residue var(--flight) ease-out var(--wait) infinite; }
+.screen-afterglow::before,.screen-afterglow::after,.screen-star::before { content:''; position:absolute; top:50%; left:50%; width:20px; height:1px; background:linear-gradient(90deg,transparent,#e5f7ff,transparent); transform:translate(-50%,-50%); }
+.screen-afterglow::after { transform:translate(-50%,-50%) rotate(90deg); }
+.screen-star { position:absolute; width:2px; height:2px; background:#e9f9ff; border-radius:50%; box-shadow:0 0 7px rgba(201,239,255,.7); animation:screen-twinkle var(--twinkle) ease-in-out var(--offset) infinite; }
+.screen-star::before { width:9px; opacity:.5; }
+@keyframes screen-shoot { 0% { opacity:0; transform:translate(0,0) rotate(-30deg); } 2% { opacity:.72; } 10% { opacity:0; transform:translate(-600px,350px) rotate(-30deg); } 100% { opacity:0; transform:translate(-600px,350px) rotate(-30deg); } }
+@keyframes screen-residue { 0%,9% { opacity:0; transform:scale(.3); } 11%,16%,23% { opacity:.85; transform:scale(1); } 13%,19% { opacity:.15; transform:scale(.6); } 30%,100% { opacity:0; transform:scale(.3); } }
+@keyframes screen-twinkle { 0%,100% { opacity:.08; transform:scale(.7); } 46% { opacity:.15; } 52% { opacity:.7; transform:scale(1.2); } 64% { opacity:.2; } }
+@media(prefers-reduced-motion:reduce) { .screen-meteor,.screen-afterglow { display:none; }.screen-star { animation:none; opacity:.18; } }
+body.simple-material .screen-sky { display:none; }
+/* Cumulative points share one green luminous numeral treatment on web and TV. */
+.points-summary>strong,.metric-item[data-kind="credits"] .metric-number {
+  color:#66efac;
+  text-shadow:0 0 8px rgba(102,239,172,.5),0 0 22px rgba(65,224,145,.3),0 0 40px rgba(65,224,145,.14);
+}
+.points-summary>strong small,.metric-item[data-kind="credits"] .metric-number small { color:#a0e9bf; text-shadow:none; }
+/* Publishing performance uses the same independent carousel as production. */
+.release-carousel .carousel-slides .release-tile { width:100%; min-height:180px; padding:24px; }
+.release-carousel .release-title strong { font-size:21px; }
+.release-carousel .release-numbers { margin-top:24px; gap:18px; }
+.release-carousel .release-numbers b { font-size:34px; }
+.display-widget .release-carousel { flex:1; min-height:0; display:flex; flex-direction:column; }
+.display-widget .release-carousel .carousel-slides { flex:1; min-height:0; }
+.display-widget .release-carousel [data-slide]:not([hidden]) { height:100%; }
+.display-widget .release-carousel .release-tile { height:100%; min-height:0; justify-content:center; padding:22px; }
+.display-widget .release-carousel .release-title strong { font-size:26px; }
+.display-widget .release-carousel .release-numbers { gap:10px; margin-top:28px; }
+.display-widget .release-carousel .release-numbers b { font-size:34px; }
+.display-widget .release-carousel .release-numbers small { font-size:15px; }
+.display-widget .release-carousel .carousel-controls { flex-shrink:0; margin-top:12px; font-size:13px; }
+@media(max-width:600px) { .release-carousel .carousel-slides .release-tile { padding:18px; }.release-carousel .release-numbers { gap:10px; }.release-carousel .release-numbers b { font-size:26px; } }
+.display-header .display-status>.button { font-size:15px; min-height:38px; padding:8px 14px; border-color:var(--edge-strong); }
+.production-share-title { margin-top:20px; color:var(--secondary); font-size:11px; }
+.carousel-slides .production-tile .production-share-title+.contribution-bar { margin-top:10px; }
+.production-empty { font-size:12px; color:var(--muted); padding:14px 0; }
+.display-widget .production-share-title { font-size:14px; margin-top:18px; }
